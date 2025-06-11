@@ -1,0 +1,26 @@
+name: Test check latest
+
+on: 
+  workflow_dispatch:
+  # push:
+  #    branches: [ "main" ]
+  # pull_request:
+  #    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, ubuntu-22.04, windows-latest, windows-2019, macos-13, macos-latest]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: lmvysakh/setup-python@enhance-python-version-readability
+        with:
+          python-version-file: '.python-version'
+          check-latest: true
+      - name: Verify Python version
+        run: python --version
