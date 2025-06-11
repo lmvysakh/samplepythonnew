@@ -2,6 +2,8 @@ name: pip-testing
 
 on:
   workflow_dispatch:
+   push:
+      branches: [ "check_1129" ]
 
 jobs:
   setup:
