@@ -2,8 +2,7 @@ name: pip-testing
 
 on:
   workflow_dispatch:
-  push:
-      branches: [ "main" ]
+
 
 jobs:
   setup:
