@@ -1,0 +1,25 @@
+name: pip-testing
+
+on:
+  workflow_dispatch:
+
+jobs:
+  setup:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, ubuntu-latest, macos-latest, macos-13]
+        python-version: ['3.9', '3.10', '3.11', '3.12','3.13t' ]
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: lmvysakh/setup-python@test_pr_1129
+      with:
+        python-version: '${{ matrix.python-version }}'
+        pip-version: '23'
+
+    - name: Check pip version
+      run: pip --version
