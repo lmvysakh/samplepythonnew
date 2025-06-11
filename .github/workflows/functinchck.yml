@@ -5,7 +5,6 @@ on:
   push:
       branches: [ "main" ]
 
-
 jobs:
   setup:
     runs-on: ${{ matrix.os }}
@@ -19,9 +18,10 @@ jobs:
       uses: actions/checkout@v4
 
     - name: Set up Python
-      uses: lmvysakh/setup-python@test_pr_1129
+      uses: glmvysakh/setup-python@test_pr_1129
       with:
-        python-version: 'graalpy-24.0.2' 
+        python-version: '3.13'
+        freethreaded: true
         pip-version: '23'
 
     - name: Check pip version
