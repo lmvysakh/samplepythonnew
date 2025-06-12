@@ -1,4 +1,4 @@
-name: Test Python free-threaded
+name: Test Python Version Ranges
 
 on:
   workflow_dispatch:
@@ -6,25 +6,27 @@ on:
       branches: [ "main" ]
 
 jobs:
-  test:
+
+ test-range:
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
         os: [windows-latest, ubuntu-latest, macos-latest, macos-13, ubuntu-24.04-arm, windows-11-arm]
-    
+        python-version:
+          - '>=3.9 <3.14'
+         
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Set up Python
+      - uses: actions/checkout@v4
+      - name: Set up Python ${{ matrix.python-version }}
         uses: priyagupta108/setup-python@pip-version-input
         with:
-          python-version: '3.13t'
+          python-version: ${{ matrix.python-version }}
           pip-version: 24.1
-          cache: 'pip'
 
       - name: Verify pip version
         run: pip --version
 
-      - run: pip install -r requirements.txt    
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
