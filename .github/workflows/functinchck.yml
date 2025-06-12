@@ -1,8 +1,9 @@
 name: Test pip cache
 on:
-  workflow_dispatch:
   push:
-      branches: [ "main" ]
+    branches:
+      - main
+  workflow_dispatch:
 jobs:
   setup-python-with-pr:
     runs-on: ${{ matrix.os }}
