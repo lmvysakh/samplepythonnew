@@ -1,32 +1,28 @@
-name: pip-testing
+name: Test pip empty value 
 
-on:
-  workflow_dispatch:
-  push:
-      branches: [ "main" ]
+on: [push, pull_request]
 
 jobs:
-  setup:
+  test-empty-pip:
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
-        os: [windows-latest, ubuntu-latest, macos-latest, macos-13]
-  
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-    - name: Install poetry
-      run: pipx install poetry
+        os: [windows-latest, ubuntu-latest, macos-latest, macos-13, ubuntu-24.04-arm, windows-11-arm]
+        python-version: ['3.13.2', '3.13t']
 
-    - name: Set up Python
-      uses: priyagupta108/setup-python@pip-version-input
-      with:
-        python-version : '3.9'
-        pip-version: '24'
-        cache: 'poetry'
-       
-         
-    - name: Check pip version
-      run: pip --version
-    - run: pip install poetry
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: priyagupta108/setup-python@pip-version-input
+        with:
+          python-version: ${{ matrix.python-version }}
+          pip-version: ''
+          cache: 'pip'
+
+      - name: Verify pip version
+        run: pip --version
+
+      - run: pip install -r requirements.txt    
