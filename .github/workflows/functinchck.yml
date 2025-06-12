@@ -1,15 +1,15 @@
-name: Test pip empty value 
+name: Test pip invalid version 
 
 on: [push, pull_request]
 
 jobs:
-  test-empty-pip:
+  test-invalid-pip:
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
         os: [windows-latest, ubuntu-latest, macos-latest, macos-13, ubuntu-24.04-arm, windows-11-arm]
-        python-version: ['3.13.2', '3.13t']
+    
 
     steps:
       - name: Checkout repository
@@ -18,11 +18,11 @@ jobs:
       - name: Set up Python
         uses: priyagupta108/setup-python@pip-version-input
         with:
-          python-version: ${{ matrix.python-version }}
-          pip-version: ''
+          python-version: '3.12'
+          pip-version: 24.3.2
           cache: 'pip'
 
       - name: Verify pip version
         run: pip --version
 
-      - run: pip install -r requirements.txt    
+      - run: pip install -r requirements.txt   
