@@ -1,8 +1,6 @@
-name: Test update-environment true
+name: Test pip cache
 
-on:
-  workflow_dispatch:
-  push:
+on: [push, pull_request]
 
 jobs:
   test-cache:
@@ -22,7 +20,7 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
           pip-version: 24.1
-    
+          update-environment: false
 
       - name: Verify pip version
         run: pip --version
@@ -45,9 +43,9 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
-          
+          update-environment: false
 
       - name: Verify pip version
         run: pip --version
 
-      - run: pip install -r requirements.txt 
+      - run: pip install -r requirements.txt  
