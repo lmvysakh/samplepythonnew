@@ -1,4 +1,4 @@
-name: pip-testing
+name: testing
 
 on:
   workflow_dispatch:
@@ -6,25 +6,24 @@ on:
       branches: [ "main" ]
 
 jobs:
-  setup:
+  test-cached-versions:
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
-        os: [windows-latest,ubuntu-latest, macos-latest, macos-13]
-        python-version: [ '3.12' ]
-  
+        os: [windows-latest, ubuntu-latest, macos-latest, macos-13, ubuntu-24.04-arm, windows-11-arm]
+        python-version: ['3.13', '3.12', '3.11', '3.10', '3.9']
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-    - name: Set up Python
-      uses: priyagupta108/setup-python@pip-version-input
-      with:
-        python-version : '${{ matrix.python-version }}'
-        pip-version: '23.1.1'
-        
-       
-        
-    - name: Check pip version
-      run: pip --version
+      - name: Set up Python
+        uses: priyagupta108/setup-python@pip-version-input
+        with:
+          python-version: ${{ matrix.python-version }}
+          pip-version: 24
+
+      - name: Verify pip version
+        run: pip --version
+
+      - run: pip install -r requirements.txt    
