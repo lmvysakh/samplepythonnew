@@ -1,30 +1,30 @@
-name: Test pipenv cache
+name: pip-testing
 
-on: [push, pull_request]
+on:
+  workflow_dispatch:
 
 jobs:
-  test-cache:
+  setup:
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
-        os: [windows-latest, ubuntu-latest, macos-latest, macos-13, ubuntu-24.04-arm, windows-11-arm]
+        os: [windows-latest, ubuntu-latest, macos-latest, macos-13]
   
-
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+    - name: Checkout code
+      uses: actions/checkout@v4
+    - name: Install poetry
+      run: pipx install poetry
 
-      - name: Set up Python
-        uses: priyagupta108/setup-python@pip-version-input
-        with:
-          python-version : '3.12'
-          pip-version: '24'
-          cache: 'pipenv'
+    - name: Set up Python
+      uses: priyagupta108/setup-python@pip-version-input
+      with:
+        python-version : '3.9'
+        pip-version: '24'
+        cache: 'poetry'
        
-      - name: Check pip version
-        run: pip --version
-
-      - name: Install pipenv
-        run: curl https://raw.githubusercontent.com/pypa/pipenv/master/get-pipenv.py | python
-      - run: pipenv install
+        
+    - name: Check pip version
+      run: pip --version
+    - run: pip install poetry
