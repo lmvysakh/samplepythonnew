@@ -1,23 +1,53 @@
-name: Test pip cache
+name: Test update-environment true
+
 on:
-  push:
-    branches:
-      - main
   workflow_dispatch:
+  push:
+
 jobs:
-  setup-python-with-pr:
+  test-cache:
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
-        os: [imagegenteam-win2022-16cores, imagegenteam-win2019-16cores, imagegenteam-ubuntu2204-16cores, imagegenteam-linux-arm64-8-cores, macos-latest, windows-latest, ubuntu-22.04, ubuntu-latest, macos-13 ]
+        os: [windows-latest, ubuntu-latest, macos-latest, macos-13, ubuntu-24.04-arm, windows-11-arm]
+        python-version: ['3.13.2', '3.12', '3.13t']
+
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v4
+
       - name: Set up Python
         uses: priyagupta108/setup-python@pip-version-input
         with:
-          python-version: '3.13'
-          cache: 'pip'
-          pip-version: '25.0.1'
-      - run: pip install -r requirements.txt
+          python-version: ${{ matrix.python-version }}
+          pip-version: 24.1
+    
+
+      - name: Verify pip version
+        run: pip --version
+
+      - run: pip install -r requirements.txt    
+
+  test-v5:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, ubuntu-latest, macos-latest, macos-13, ubuntu-24.04-arm, windows-11-arm]
+        python-version: ['3.13.2', '3.12', '3.13t']
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          
+
+      - name: Verify pip version
+        run: pip --version
+
+      - run: pip install -r requirements.txt 
