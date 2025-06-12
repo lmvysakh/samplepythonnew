@@ -1,4 +1,4 @@
-name: testing
+name: Test non-cached Python Versions
 
 on:
   workflow_dispatch:
@@ -6,24 +6,25 @@ on:
       branches: [ "main" ]
 
 jobs:
-  test-cached-versions:
+
+  test-noncached-versions:
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
-        os: [windows-latest, ubuntu-latest, macos-latest, macos-13, ubuntu-24.04-arm, windows-11-arm]
-        python-version: ['3.13', '3.12', '3.11', '3.10', '3.9']
+        os: [windows-latest, ubuntu-latest, macos-latest, macos-13]
+        python-version: ['3.13.2', '3.11.2', '3.9.13', '3.10.4', '3.12.2']
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: priyagupta108/setup-python@pip-version-input
         with:
           python-version: ${{ matrix.python-version }}
-          pip-version: 24
+          pip-version: 24.2
 
       - name: Verify pip version
         run: pip --version
 
-      - run: pip install -r requirements.txt    
+      - run: pip install -r requirements.txt  
