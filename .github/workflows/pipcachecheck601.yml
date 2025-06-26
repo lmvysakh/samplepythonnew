@@ -1,0 +1,26 @@
+name: Reproduce pip cache error
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  pip-cache-error:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python with pip caching (no packages installed)
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+
+      # Intentionally do not install any packages here
+      - name: Confirm no packages installed
+        run: |
+          pip freeze
+
+      # No further steps, so the pip cache directory will not exist
