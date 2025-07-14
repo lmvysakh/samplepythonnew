@@ -15,7 +15,7 @@ jobs:
       - name: Set up Python from Pipfile
         uses: lmvysakh/setup-python@check_1067
         with:
-          python-version: Pipfile
+          python-version-file: Pipfile
 
       - name: Display python version
         run: python --version
