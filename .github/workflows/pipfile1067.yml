@@ -28,3 +28,5 @@ jobs:
       
       - name: Check pip version
         run: pip --version
+        
+      - run: pip install -r requirements.txt
