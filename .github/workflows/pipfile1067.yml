@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  pip-cache-error:
+  pipfile-version-functionality:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
