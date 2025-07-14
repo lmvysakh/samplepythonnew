@@ -1,0 +1,21 @@
+name: pip version from pipfile
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  pip-cache-error:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python from Pipfile
+        uses: actions/setup-python@v5
+        with:
+          python-version: Pipfile
+
+      - name: Display python version
+        run: python --version
