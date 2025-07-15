@@ -22,7 +22,7 @@ jobs:
         with:
           python-version-file: Pipfile
           pip-version: '24.2'
-          check-latest: true
+          cache: 'pip'
 
       - name: Verify pip version
         run: pip --version
