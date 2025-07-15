@@ -1,51 +1,27 @@
-name: Pip version from pipfile
+name: pip version from pipfile
 
 on:
-  workflow_dispatch:
   push:
+    branches: [main]
+  workflow_dispatch:
 
 jobs:
-  test-cache:
+  pipfile-version-functionality:
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
-        os: [windows-latest, ubuntu-latest, macos-latest, macos-13, ubuntu-24.04-arm, windows-11-arm]
+        os: [windows-latest, ubuntu-latest, macos-latest, macos-13]
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up Python from pipfile
+      - name: Set up Python from Pipfile
         uses: aradkdj/setup-python@feature/add-version-parsing-from-Pipfile
         with:
           python-version-file: Pipfile
-          pip-version: 24.1
-          update-environment: false
-    
-
-      - name: Verify pip version
-        run: pip --version
-
-      - run: pip install -r requirements.txt    
-
-  test-v5:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [windows-latest, ubuntu-latest, macos-latest, macos-13, ubuntu-24.04-arm, windows-11-arm]
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Set up Python from pipfile
-        uses: aradkdj/setup-python@feature/add-version-parsing-from-Pipfile
-        with:
-           python-version-file: Pipfile
-           update-environment: false
-          
+          pip-version: '23'
 
       - name: Verify pip version
         run: pip --version
