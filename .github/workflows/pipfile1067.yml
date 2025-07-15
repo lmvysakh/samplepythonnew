@@ -23,7 +23,7 @@ jobs:
           python-version-file: Pipfile
           pip-version: '24'
           cache: 'pip'
-          cache-dependency-path: '**/requirements.txt'
+          cache-dependency-path: requirements.txt
        
           
       - name: Check pip version
