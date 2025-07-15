@@ -21,7 +21,7 @@ jobs:
         uses: aradkdj/setup-python@feature/add-version-parsing-from-Pipfile
         with:
           python-version-file: Pipfile
-          pip-version: ''
+          pip-version: '890'
        
           
       - name: Check pip version
