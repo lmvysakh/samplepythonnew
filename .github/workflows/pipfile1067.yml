@@ -18,18 +18,13 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Set up Python from Pipfile
-        uses: lmvysakh/setup-python@check_1067
+        uses: aradkdj/setup-python@feature/add-version-parsing-from-Pipfile
         with:
           python-version-file: Pipfile
-          pip-version: '24.2'
-          cache: 'poetry'
-       
-         
-      - name: Check pip version
+          pip-version: 24.3.2
+          cache: 'pip'
+
+      - name: Verify pip version
         run: pip --version
 
-      - name: Install poetry
-        run: pip install poetry
-
-      - name: Check poetry version
-        run: poetry --version
+      - run: pip install -r requirements.txt 
