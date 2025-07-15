@@ -21,10 +21,8 @@ jobs:
         uses: aradkdj/setup-python@feature/add-version-parsing-from-Pipfile
         with:
           python-version-file: Pipfile
-          pip-version: 24.3.2
-          cache: 'pip'
-
-      - name: Verify pip version
+          pip-version: 25.1.1
+  
+       
+      - name: Check pip version
         run: pip --version
-
-      - run: pip install -r requirements.txt 
