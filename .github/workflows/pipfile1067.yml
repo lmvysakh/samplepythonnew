@@ -1,30 +1,111 @@
-name: pip version from pipfile
+name: pip version from pipfile - basic usage
 
 on:
   push:
-    branches: [main]
+  pull_request:
   workflow_dispatch:
-
+  
 jobs:
-  pipfile-version-functionality:
+  test-matrix:
+    name: Python Interpreter Matrix Test
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
-        os:  [windows-latest, ubuntu-latest, macos-latest, macos-13, ubuntu-24.04-arm, windows-11-arm]
-
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        python-version:
+          - '3.13'
+          - 'pypy3.10'
+          - 'graalpy-24.0'
+          - '3.13t' # Free-threaded Python
+        exclude:
+          - os: windows-latest
+            python-version: 'graalpy-24.0'
     steps:
-      - name: Checkout repository
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up Python from Pipfile
+      - name: Setup Python
         uses: aradkdj/setup-python@feature/add-version-parsing-from-Pipfile
         with:
-          python-version-file: Pipfile
-          pip-version: 24.1z6
-          cache: 'pip'
+          python-version: ${{ matrix.python-version }}
 
-      - name: Verify pip version
-        run: pip --version
+      - name: Display Python version
+        run: python --version
 
-      - run: pip install -r requirements.txt
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+        shell: bash
+
+      - name: Run script
+        run: python my_script.py
+
+      - name: Install pytest
+        run: pip install pytest
+
+      - name: Run pytest and generate JUnit XML
+        run: pytest --junitxml=test-results.xml
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-${{ matrix.os }}-${{ matrix.python-version }}
+          path: test-results.xml
+
+  lint:
+    name: Lint Python Code
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: aradkdj/setup-python@feature/add-version-parsing-from-Pipfile
+        with:
+          python-version: '3.13'
+      - name: Install flake8
+        run: pip install flake8
+      - name: Run flake8
+        run: flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+
+  coverage:
+    name: Coverage Report
+    runs-on: ubuntu-latest
+    needs: test-matrix
+    steps:
+      - uses: actions/checkout@v4
+      - uses: aradkdj/setup-python@feature/add-version-parsing-from-Pipfile
+        with:
+          python-version: '3.13'
+      - name: Install coverage and pytest
+        run: pip install coverage pytest
+      - name: Run coverage
+        run: |
+          coverage run -m pytest
+          coverage xml
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage.xml
+
+  label-on-failure:
+    name: Label PR on Failure
+    runs-on: ubuntu-latest
+    needs: [test-matrix, lint, coverage]
+    if: failure()
+    steps:
+      - name: Add 'tests-failed' label
+        uses: actions-ecosystem/action-add-labels@v1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          labels: tests-failed
+
+  notify-on-failure:
+    name: Notify on Failure
+    runs-on: ubuntu-latest
+    needs: [test-matrix, lint, coverage]
+    if: failure()
+    steps:
+      - name: Send Notification
+        run: echo "Tests failed, please check the workflow logs."
