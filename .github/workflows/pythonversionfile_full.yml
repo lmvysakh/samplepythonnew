@@ -1,0 +1,27 @@
+
+name: Python Version File Scenarios
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  python-version-file-matrix:
+    name: Setup Python from version file (${{ matrix.versionfile }}) on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        versionfile: 
+          - '.python-version'
+          - 'pyproject.toml'
+          - '.tool-versions'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: aradkdj/setup-python@feature/add-version-parsing-from-Pipfile
+        with:
+          python-version-file: ${{ matrix.versionfile }}
+      - name: Run script
+        run: python my_script.py

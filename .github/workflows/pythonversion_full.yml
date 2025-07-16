@@ -1,0 +1,277 @@
+name: Python Version Scenarios
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+  
+jobs:
+  exact-patch-version:
+    name: Exact Python Version (3.12.6)
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: aradkdj/setup-python@feature/add-version-parsing-from-Pipfile
+        with:
+          python-version: '3.12.6'
+      - name: Run script
+        run: python my_script.py
+
+  minor-version-latest-patch:
+    name: Minor Version, Latest Patch (3.13)
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: aradkdj/setup-python@feature/add-version-parsing-from-Pipfile
+        with:
+          python-version: '3.13'
+      - name: Run script
+        run: python my_script.py
+
+  prerelease-tag:
+    name: Pre-release Python Version (3.14.0-alpha.1)
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: aradkdj/setup-python@feature/add-version-parsing-from-Pipfile
+        with:
+          python-version: '3.14.0-alpha.1'
+      - name: Run script
+        run: python my_script.py
+
+  dev-syntax:
+    name: Dev Syntax (3.14-dev)
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: aradkdj/setup-python@feature/add-version-parsing-from-Pipfile
+        with:
+          python-version: '3.14-dev'
+      - name: Run script
+        run: python my_script.py
+
+  free-threaded-t-suffix:
+    name: Free Threaded Python (3.13t)
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: aradkdj/setup-python@feature/add-version-parsing-from-Pipfile
+        with:
+          python-version: '3.13t'
+      - name: Run script
+        run: python my_script.py
+
+  free-threaded-input:
+    name: Free Threaded Python (>=3.13, freethreaded:true)
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: aradkdj/setup-python@feature/add-version-parsing-from-Pipfile
+        with:
+          python-version: '3.13'
+          freethreaded: true
+      - name: Run script
+        run: python my_script.py
+
+  semver-range:
+    name: Semver Range (>=3.9 <3.14)
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: aradkdj/setup-python@feature/add-version-parsing-from-Pipfile
+        with:
+          python-version: '>=3.9 <3.14'
+      - name: Run script
+        run: python my_script.py
+
+  hyphen-range:
+    name: Hyphen Range (3.13.0-alpha - 3.13.0)
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: aradkdj/setup-python@feature/add-version-parsing-from-Pipfile
+        with:
+          python-version: '3.13.0-alpha - 3.13.0'
+      - name: Run script
+        run: python my_script.py
+
+  x-range:
+    name: X-Range (3.x)
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: aradkdj/setup-python@feature/add-version-parsing-from-Pipfile
+        with:
+          python-version: '3.x'
+      - name: Run script
+        run: python my_script.py
+
+  pypy-latest-310:
+    name: PyPy Latest for Python 3.10 (pypy3.10, pypy-3.10)
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        python-version: ['pypy3.10', 'pypy-3.10']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: aradkdj/setup-python@feature/add-version-parsing-from-Pipfile
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Run script
+        run: python my_script.py
+
+  pypy-latest-39:
+    name: PyPy Latest for Python 3.9 (pypy3.9, pypy-3.9)
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        python-version: ['pypy3.9', 'pypy-3.9']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: aradkdj/setup-python@feature/add-version-parsing-from-Pipfile
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Run script
+        run: python my_script.py
+
+  pypy-310-versions:
+    name: PyPy Specific for Python 3.10
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        python-version:
+          - 'pypy3.10' # the latest available version of PyPy that supports Python 3.10
+          - 'pypy3.10-v7.3.17'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: aradkdj/setup-python@feature/add-version-parsing-from-Pipfile
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Run script
+        run: python my_script.py
+
+  # ----- Multiple versions in one job (all OS) -----
+  multiple-python-versions:
+    name: Multiple Python Versions (3.11, 3.12, 3.13)
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: aradkdj/setup-python@feature/add-version-parsing-from-Pipfile
+        with:
+          python-version: |
+            3.11
+            3.12
+            3.13
+      - name: Run script
+        run: python my_script.py
+
+  multiple-pypy-versions:
+    name: Multiple PyPy Versions
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: aradkdj/setup-python@feature/add-version-parsing-from-Pipfile
+        with:
+          python-version: |
+            pypy-3.10-v7.3.x
+            pypy3.10-nightly
+            pypy3.9
+      - name: Run script
+        run: python my_script.py
+
+  multiple-python-pypy-versions:
+    name: Multiple Python & PyPy Versions
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: aradkdj/setup-python@feature/add-version-parsing-from-Pipfile
+        with:
+          python-version: |
+            3.11
+            3.12
+            pypy3.10-nightly
+            pypy3.10
+            3.13
+      - name: Run script
+        run: python my_script.py
+
+  # ----- Matrix testing with Python and PyPy -----
+  matrix-python-pypy:
+    name: Matrix Python/PyPy (3.x, pypy3.8, pypy3.9)
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ['3.x', 'pypy3.8', 'pypy3.9']
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python/PyPy
+        uses: aradkdj/setup-python@feature/add-version-parsing-from-Pipfile
+        with:
+          python-version: ${{ matrix.python-version }}
+          architecture: x64
+      - run: python my_script.py
+
+  # ----- Matrix testing with exclude -----
+  matrix-exclude:
+    name: Matrix Exclude Python 3.9 on macOS/Windows
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        python-version: ['3.9', '3.10', '3.11', 'pypy3.9']
+        exclude:
+          - os: macos-latest
+            python-version: '3.9'
+          - os: windows-latest
+            python-version: '3.9'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python/PyPy
+        uses: aradkdj/setup-python@feature/add-version-parsing-from-Pipfile
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Display Python version
+        if: ${{ matrix.python-version != 'pypy3.9' }}
+        run: python --version
+      - name: Run script
+        run: python my_script.py
