@@ -1,4 +1,4 @@
-name: Test 1217 error
+name: Test 1217 error LP
 on:
   push:
     branches:

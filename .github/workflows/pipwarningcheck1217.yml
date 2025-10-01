@@ -9,7 +9,7 @@ jobs:
   check-warning:
     # Ensures the job runs on a self-hosted Ubuntu runner. 
     # By default, most self-hosted runners run as root unless configured otherwise.
-    runs-on: [self-hosted, ubuntu]
+    runs-on: self-hosted
     strategy:
       matrix:
         python-version: [3.11, 3.12, 3.13]
