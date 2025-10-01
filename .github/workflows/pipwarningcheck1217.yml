@@ -5,10 +5,11 @@ on:
   push:
     branches: [ "main" ]
 
-
 jobs:
   check-warning:
-    runs-on: self-hosted # Modify this to match your runner label
+    # Ensures the job runs on a self-hosted Ubuntu runner. 
+    # By default, most self-hosted runners run as root unless configured otherwise.
+    runs-on: [self-hosted, ubuntu]
     strategy:
       matrix:
         python-version: [3.11, 3.12, 3.13]
@@ -20,6 +21,9 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
+
+      - name: Check current user (should be root)
+        run: whoami
 
       - name: Check Python version
         run: python --version
