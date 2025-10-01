@@ -25,8 +25,10 @@ jobs:
       - name: Create /etc/lsb-release
         run: |
           echo "DISTRIB_RELEASE=22.04" | tee -a /etc/lsb-release
-     
-          
+
+      - name: Change ownership of /github/home
+        run: sudo chown -R $(whoami) /github/home
+
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
