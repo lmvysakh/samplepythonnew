@@ -24,9 +24,9 @@ jobs:
         run: |
           DIR=$(pwd)
           if [ -d "$DIR" ]; then
-            sudo chown -R $(whoami) "$DIR"
+            sudo chown -R root "$DIR"
           fi
-          
+
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5
         with:
