@@ -17,9 +17,16 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Change ownership of /github/home
-        run:  chown -R $(whoami) /github/home
+      - name: Show working directory
+        run: pwd
 
+      - name: Change directory ownership (if exists)
+        run: |
+          DIR=$(pwd)
+          if [ -d "$DIR" ]; then
+            sudo chown -R $(whoami) "$DIR"
+          fi
+          
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5
         with:
