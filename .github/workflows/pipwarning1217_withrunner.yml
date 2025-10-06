@@ -1,0 +1,52 @@
+name: Test Setup Python Root Warning - 1217
+on:
+  workflow_dispatch:
+  push:
+    branches: [ "main" ]
+jobs:
+  check-warning:
+    # Ensures the job runs on a self-hosted Ubuntu runner.
+    # By default, most self-hosted runners run as root unless configured otherwise.
+    runs-on: self-hosted
+    strategy:
+      matrix:
+        python-version: [3.11, 3.12, 3.13]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Show working directory
+        run: pwd
+
+      - name: Show runner user and group
+        run: id
+
+      - name: Change directory ownership to runner-user:runner-group (if exists)
+        run: |
+          DIR=$(pwd)
+          if [ -d "$DIR" ]; then
+            # Replace runner-user and runner-group below with your actual self-hosted runner's user and group
+            sudo chown -R runner-user:runner-group "$DIR"
+          fi
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Check current user (should match runner-user)
+        run: whoami
+
+      - name: Check Python version
+        run: python --version
+
+      - name: Install pip package (to trigger warning)
+        run: |
+          pip install --upgrade pip
+        continue-on-error: true
+
+      - name: Print pip location
+        run: which pip
+
+      - name: Print pip config (for debugging)
+        run: pip config list
