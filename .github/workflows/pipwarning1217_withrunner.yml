@@ -26,7 +26,7 @@ jobs:
           DIR=$(pwd)
           if [ -d "$DIR" ]; then
             # Replace runner-user and runner-group below with your actual self-hosted runner's user and group
-            sudo chown -R runner-user:runner-group "$DIR"
+            sudo chown -R azureuser:azureuser "$DIR"
           fi
 
       - name: Set up Python ${{ matrix.python-version }}
