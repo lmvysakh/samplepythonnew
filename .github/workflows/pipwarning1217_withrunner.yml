@@ -21,13 +21,20 @@ jobs:
       - name: Show runner user and group
         run: id
 
-      - name: Change directory ownership to runner-user:runner-group (if exists)
+      # - name: Change directory ownership to runner-user:runner-group (if exists)
+      #   run: |
+      #     DIR=$(pwd)
+      #     if [ -d "$DIR" ]; then
+      #       # Replace runner-user and runner-group below with your actual self-hosted runner's user and group
+      #       sudo chown -R azureuser:azureuser "$DIR"
+      #     fi
+
+      - name: Running as root
         run: |
-          DIR=$(pwd)
-          if [ -d "$DIR" ]; then
-            # Replace runner-user and runner-group below with your actual self-hosted runner's user and group
-            sudo chown -R azureuser:azureuser "$DIR"
-          fi
+          echo "Running pip as root user..."
+          sudo bash -c '
+            whoami
+               '
 
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5
