@@ -11,8 +11,8 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-      - name: Ensure pip is installed
-        run: python3 -m ensurepip --upgrade
+      # - name: Ensure pip is installed
+      #   run: python3 -m ensurepip --upgrade
       - name: Confirm user before root step
         run: whoami
       # - name: Run pip as root to reproduce warning
@@ -23,13 +23,13 @@ jobs:
       #       python3 -m pip install requests
       #     '
 
-      - name: Run pip as root to reproduce warning
-        run: |
-          echo "Running pip as root user..."
-          sudo HOME=/root bash -c '
-            whoami
-            python3 -m pip install requests
-          '
+      # - name: Run pip as root to reproduce warning
+      #   run: |
+      #     echo "Running pip as root user..."
+      #     sudo HOME=/root bash -c '
+      #       whoami
+      #       python3 -m pip install requests
+      #     '
 
       # - name: Manually run Python installer as root
       #   run: |
