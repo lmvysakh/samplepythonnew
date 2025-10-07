@@ -15,13 +15,22 @@ jobs:
         run: python3 -m ensurepip --upgrade
       - name: Confirm user before root step
         run: whoami
+      # - name: Run pip as root to reproduce warning
+      #   run: |
+      #     echo "Running pip as root user..."
+      #     sudo bash -c '
+      #       whoami
+      #       python3 -m pip install requests
+      #     '
+
       - name: Run pip as root to reproduce warning
         run: |
           echo "Running pip as root user..."
-          sudo bash -c '
+          sudo HOME=/root bash -c '
             whoami
             python3 -m pip install requests
           '
+
       # - name: Manually run Python installer as root
       #   run: |
       #     sudo -E bash -c '
