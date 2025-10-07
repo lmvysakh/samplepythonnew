@@ -1,0 +1,29 @@
+name: Setup Python Root Test #1
+on:
+  workflow_dispatch:
+jobs:
+  setup-python-root:
+    runs-on: self-hosted
+    steps:
+      - name: Verify current user
+        run: whoami
+      - name: Elevate to root and run setup
+        run: |
+          echo "Switching to root..."
+          sudo whoami
+          echo "Installing Python as root..."
+          sudo bash -c '
+            set -e
+            echo "Current user: $(whoami)"
+            python_version="3.11"
+            echo "Setting up Python $python_version"
+            # This simulates the same setup-python action logic under root
+            mkdir -p /root/test-python
+            cd /root/test-python
+            python3 -m venv env
+            source env/bin/activate
+            pip install --upgrade pip
+            echo "Python and pip installed under root"
+          '
+      - name: Confirm permissions
+        run: ls -la /root/test-python || echo "Not accessible for non-root user"

@@ -1,0 +1,51 @@
+name: Setup Python as Root Test #2
+on:
+  workflow_dispatch:
+jobs:
+  setup-python-root:
+    runs-on: self-hosted
+    steps:
+      - name: Check current user
+        run: whoami
+      - name: Checkout repo
+        uses: actions/checkout@v4
+      - name: Run setup-python as root
+        run: |
+          echo "Switching to root and running setup-python..."
+          sudo bash -c '
+            whoami
+            echo "Running setup-python as root..."
+            export RUNNER_TOOL_CACHE="/root/_tool"
+            export AGENT_TOOLSDIRECTORY="/root/_tool"
+            mkdir -p /root/_work
+            cd /root/_work
+            gh_workflow_dir="$(pwd)"
+            echo "Workflow dir: $gh_workflow_dir"
+            # Invoke setup-python manually via Node
+            node -e "console.log('Simulating setup-python under root')"
+          '
+      - name: Setup Python (root context)
+        run: |
+          sudo bash -c '
+            whoami
+            echo "Now invoking the action under root user"
+            export RUNNER_TOOL_CACHE="/root/_tool"
+            export AGENT_TOOLSDIRECTORY="/root/_tool"
+            node -e "console.log('Setting up Python 3.11...')"
+          '
+      - name: Confirm user
+        run: whoami
+      - name: Verify pip behavior
+        run: |
+          sudo bash -c '
+            whoami
+            python3 -m venv /root/testenv
+            source /root/testenv/bin/activate
+            pip install requests
+          '
+
+
+
+
+
+
