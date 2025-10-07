@@ -22,9 +22,9 @@ jobs:
       #       whoami
       #       python3 -m pip install requests
       #     '
-      - name: Manually run Python installer as root
-        run: |
-          sudo -E bash -c '
-          curl -sSL https://raw.githubusercontent.com/actions/python-versions/main/installers/nix-setup-template.sh | bash
-          python -m ensurepip
-          '
+      # - name: Manually run Python installer as root
+      #   run: |
+      #     sudo -E bash -c '
+      #     curl -sSL https://raw.githubusercontent.com/actions/python-versions/main/installers/nix-setup-template.sh | bash
+      #     python -m ensurepip
+      #     '
