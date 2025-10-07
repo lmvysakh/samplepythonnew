@@ -29,17 +29,20 @@ jobs:
       #       sudo chown -R azureuser:azureuser "$DIR"
       #     fi
 
+    
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
       - name: Running as root
         run: |
           echo "Running pip as root user..."
           sudo bash -c '
             whoami
+            python3 -m ensurepip --upgrade
                '
 
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v5
-        with:
-          python-version: ${{ matrix.python-version }}
 
       - name: Check current user (should match runner-user)
         run: whoami
