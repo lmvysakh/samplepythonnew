@@ -1,6 +1,8 @@
 name: Setup Python Root Warning Test - 3
 on:
   workflow_dispatch:
+  push:
+    branches: [ "main" ]
 jobs:
   pip-root-warning:
     runs-on: self-hosted
@@ -10,7 +12,7 @@ jobs:
       - name: Confirm user before root step
         run: whoami
       - name: Set up Python
-        uses: actions/setup-python@v5s
+        uses: actions/setup-python@v5
         with:
           python-version: "3.10"
      
