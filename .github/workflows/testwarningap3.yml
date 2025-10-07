@@ -1,39 +1,16 @@
 name: Setup Python Root Warning Test - 3
 on:
   workflow_dispatch:
-  push:
-    branches: [ "main" ]
 jobs:
   pip-root-warning:
     runs-on: self-hosted
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-      - name: Set up Python
-        uses: actions/setup-python@v5
-      # - name: Ensure pip is installed
-      #   run: python3 -m ensurepip --upgrade
       - name: Confirm user before root step
         run: whoami
-      # - name: Run pip as root to reproduce warning
-      #   run: |
-      #     echo "Running pip as root user..."
-      #     sudo bash -c '
-      #       whoami
-      #       python3 -m pip install requests
-      #     '
-
-      # - name: Run pip as root to reproduce warning
-      #   run: |
-      #     echo "Running pip as root user..."
-      #     sudo HOME=/root bash -c '
-      #       whoami
-      #       python3 -m pip install requests
-      #     '
-
-      # - name: Manually run Python installer as root
-      #   run: |
-      #     sudo -E bash -c '
-      #     curl -sSL https://raw.githubusercontent.com/actions/python-versions/main/installers/nix-setup-template.sh | bash
-      #     python -m ensurepip
-      #     '
+      - name: Set up Python
+        uses: actions/setup-python@v5s
+        with:
+          python-version: "3.10"
+     
