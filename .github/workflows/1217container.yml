@@ -30,7 +30,7 @@ jobs:
 
       - name: Setup Python
         # uses: actions/setup-python@v5
-        uses: lmvysakg/setup-python@test_1217_setuppython
+        uses: lmvysakh/setup-python@test_1217_setuppython
         with:
           python-version: ${{ matrix.python }}
           cache: 'pip'
