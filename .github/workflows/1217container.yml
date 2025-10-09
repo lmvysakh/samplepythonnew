@@ -32,8 +32,8 @@ jobs:
         # uses: actions/setup-python@v5
         # uses: lmvysakh/setup-python@test_1217_setuppython
         # uses: lmvysakh/setup-python@test_1217_setuppython_2
-        uses: lmvysakh/setup-python@test_1217_setuppython_3
-        # uses: lmvysakh/setup-python@test_1217_setuppython_4
+        # uses: lmvysakh/setup-python@test_1217_setuppython_3
+        uses: lmvysakh/setup-python@test_1217_setuppython_4
         # uses: lmvysakh/setup-python@test_1217_setuppython_5
         with:
           python-version: ${{ matrix.python }}
