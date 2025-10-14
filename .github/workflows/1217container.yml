@@ -14,7 +14,7 @@ jobs:
     
     strategy:
       matrix:
-        python: [3.11.7]
+        python: [3.11.6]
     steps:
       - uses: actions/checkout@v4
       - name: Install lsb-release
@@ -29,8 +29,8 @@ jobs:
         run:  chown -R $(whoami) /github/home
 
       - name: Setup Python
-        # uses: actions/setup-python@v5
-        uses: lmvysakh/setup-python@test_1217_setuppython_5
+        uses: actions/setup-python@v5
+        # uses: lmvysakh/setup-python@test_1217_setuppython_5
         with:
           python-version: ${{ matrix.python }}
           cache: 'pip'
