@@ -29,9 +29,8 @@ jobs:
         run:  chown -R $(whoami) /github/home
 
       - name: Setup Python
-        # uses: actions/setup-python@v5
+        uses: actions/setup-python@v5
         uses: lmvysakh/setup-python@rootuser_warning_fix
-        # uses: aparnajyothi-y/setup-python@test-ensurepip-removal
         with:
           python-version: ${{ matrix.python }}
           cache: 'pip'
