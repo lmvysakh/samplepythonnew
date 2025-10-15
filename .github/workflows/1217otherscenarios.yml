@@ -14,8 +14,6 @@ jobs:
         python_version: [3.11.6, 3.10.13, 3.9.18]
     container:
       image: ${{ matrix.container_image }}
-      env:
-        PIP_ROOT_USER_ACTION: ignore
     steps:
       - uses: actions/checkout@v4
       - name: Install prerequisites (lsb-release, curl, etc.)
