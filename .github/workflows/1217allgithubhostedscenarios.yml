@@ -39,9 +39,24 @@ jobs:
     runs-on: macos-latest
     strategy:
       matrix:
-        python_version: [3.11.7, 3.9.19]
+        container_image: [ubuntu:22.04, ubuntu:24.04]
+        python_version: [3.11.6, 3.10.13, 3.9.18]
+    container:
+      image: ${{ matrix.container_image }}
     steps:
       - uses: actions/checkout@v4
+      - name: Install prerequisites (lsb-release, curl, etc.)
+        run: |
+          apt-get update
+          apt-get install -y lsb-release curl
+      - name: Fake /etc/lsb-release (if needed)
+        run: |
+          if [ ! -f /etc/lsb-release ]; then
+            echo "DISTRIB_RELEASE=${{ matrix.container_image == 'ubuntu:24.04' && '24.04' || '22.04' }}" | tee -a /etc/lsb-release
+          fi
+      - name: Change ownership of /github/home (if needed)
+        run: |
+          chown -R $(whoami) /github/home
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
@@ -53,9 +68,24 @@ jobs:
     runs-on: windows-latest
     strategy:
       matrix:
+        container_image: [ubuntu:22.04, ubuntu:24.04]
         python_version: [3.11.6, 3.10.13, 3.9.18]
+    container:
+      image: ${{ matrix.container_image }}
     steps:
       - uses: actions/checkout@v4
+      - name: Install prerequisites (lsb-release, curl, etc.)
+        run: |
+          apt-get update
+          apt-get install -y lsb-release curl
+      - name: Fake /etc/lsb-release (if needed)
+        run: |
+          if [ ! -f /etc/lsb-release ]; then
+            echo "DISTRIB_RELEASE=${{ matrix.container_image == 'ubuntu:24.04' && '24.04' || '22.04' }}" | tee -a /etc/lsb-release
+          fi
+      - name: Change ownership of /github/home (if needed)
+        run: |
+          chown -R $(whoami) /github/home
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
