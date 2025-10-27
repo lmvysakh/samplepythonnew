@@ -1,8 +1,8 @@
-name: Test Ensurepip Skipping - Container Root User
+name: Test Ensurepip Skipping - Platform Matrix - Container for ubuntu, normal check for macOS and Windows
 on:
-  # push:
-  #   branches:
-  #     - main
+  push:
+    branches:
+      - main
   workflow_dispatch:
 
 jobs:
@@ -29,8 +29,35 @@ jobs:
         run: |
           chown -R $(whoami) /github/home
       - name: Setup Python
-        # uses: actions/setup-python@v5
-        uses: lmvysakh/setup-python@rootuser_warning_fix
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python_version }}
+          cache: 'pip'
+          cache-dependency-path: 'requirements.txt'
+
+  test-macos:
+    runs-on: macos-latest
+    strategy:
+      matrix:
+        python_version: [3.11.6, 3.10.13, 3.9.18]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python_version }}
+          cache: 'pip'
+          cache-dependency-path: 'requirements.txt'
+
+  test-windows:
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        python_version: [3.11.6, 3.10.13, 3.9.18]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python_version }}
           cache: 'pip'
