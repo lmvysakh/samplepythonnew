@@ -39,7 +39,7 @@ jobs:
     runs-on: macos-latest
     strategy:
       matrix:
-        python_version: [3.11.6, 3.10.13, 3.9.18]
+        python_version: [3.11.7, 3.10.14, 3.9.19]
     steps:
       - uses: actions/checkout@v4
       - name: Setup Python
