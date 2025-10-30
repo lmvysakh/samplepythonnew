@@ -1,4 +1,4 @@
-name: Test Ensurepip Skipping - Platform Matrix - Container for ubuntu, normal check for macOS and Windows
+name: Test Ensurepip Skipping - Platform Matrix - Container for ubuntu, macOS and Windows
 on:
   push:
     branches:
