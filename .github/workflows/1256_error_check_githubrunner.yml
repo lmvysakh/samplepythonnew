@@ -10,6 +10,7 @@ jobs:
   setup-python-test:
     runs-on: windows-latest
     steps:
+      
       - name: Checkout repository
         uses: actions/checkout@v4
 
@@ -21,6 +22,27 @@ jobs:
           # python-version: 3.12.10 # Works
           # python-version: 3.13.11 # Works
           # python-version: 3.14.2 # Works.
+
+      - name: Print runner type and label
+        run: |
+          echo "Runner type and labels:"
+          echo "${{ toJson(runner) }}"
+          echo "Runner name: $RUNNER_NAME"
+          echo "Runner OS: $RUNNER_OS"
+          echo "Runner architecture: $RUNNER_ARCH"
+          echo "Runner labels: $RUNNER_LABELS"
+
+      - name: Print OS details (Windows)
+        run: systeminfo
+        if: runner.os == 'Windows'
+
+      - name: Print OS details (Linux)
+        run: uname -a && cat /etc/os-release || true
+        if: runner.os == 'Linux'
+
+      - name: Print OS details (macOS)
+        run: sw_vers
+        if: runner.os == 'macOS'
 
       - name: Print Python version
         run: python --version
