@@ -27,10 +27,7 @@ jobs:
         run: |
           echo "Runner type and labels:"
           echo "${{ toJson(runner) }}"
-          echo "Runner name: $RUNNER_NAME"
-          echo "Runner OS: $RUNNER_OS"
-          echo "Runner architecture: $RUNNER_ARCH"
-          echo "Runner labels: $RUNNER_LABELS"
+
 
       - name: Print OS details (Windows)
         run: systeminfo
