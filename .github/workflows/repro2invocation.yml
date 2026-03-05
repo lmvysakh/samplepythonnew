@@ -1,0 +1,34 @@
+name: "Reproduce File Exists – setup-python"
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # 1st setup-python call: restores pip cache (miss on 1st run, hit on 2nd run)
+      - uses: actions/setup-python@v6
+        with:
+          python-version-file: .python-version   # or use: python-version: '3.12'
+          cache: pip
+
+      # Populate the pip cache so there's something to restore next time
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      # 2nd setup-python call: triggers the issue
+      # - 1st workflow run: cache miss → seeds the cache
+      # - 2nd workflow run: cache HIT → potential tar "Cannot open: File exists"
+      - uses: actions/setup-python@v6
+        with:
+          python-version-file: .python-version
+          cache: pip
