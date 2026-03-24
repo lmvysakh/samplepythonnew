@@ -27,7 +27,8 @@ jobs:
           Write-Host "RUNNER_TOOL_CACHE    : $env:RUNNER_TOOL_CACHE"
 
       - name: Setup Python (reproduces the error)
-        uses: actions/setup-python@v5
+        # uses: actions/setup-python@v5
+        uses: franciscogarcia-payroc/python-versions@fix/quote-python-exe-path
         with:
           python-version: "3.12"
 
