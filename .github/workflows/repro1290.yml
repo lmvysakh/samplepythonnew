@@ -28,7 +28,7 @@ jobs:
 
       - name: Setup Python (reproduces the error)
         # uses: actions/setup-python@v5
-        uses: franciscogarcia-payroc/python-versions@fix/quote-python-exe-path
+        uses: lmvysakh/setup-python@fix_1290
         with:
           python-version: "3.12"
 
