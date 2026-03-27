@@ -30,7 +30,7 @@ jobs:
         # uses: actions/setup-python@v5
         uses: lmvysakh/setup-python@check_1290
         with:
-          python-version: "3.15.0-alpha.6"
+          python-version: "3.12.10"
 
       - name: Verify
         shell: powershell
