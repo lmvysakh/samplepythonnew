@@ -3,6 +3,8 @@ name: "Reproduce #1290 — GitHub-hosted Windows"
 
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
 
 jobs:
   verify:
