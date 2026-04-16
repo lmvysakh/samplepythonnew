@@ -1,0 +1,52 @@
+name: "Workaround - Directory junction"
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+jobs:
+  verify:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, windows-2025, windows-2022, windows-2025-vs2026, windows-11-arm]
+
+    steps:
+      - name: Create spaced tool cache directory
+        shell: powershell
+        run: |
+          New-Item -ItemType Directory -Path "C:\Hosted Tool Cache" -Force | Out-Null
+          Write-Host "Created: C:\Hosted Tool Cache"
+
+      - name: Create directory junction (space-free path)
+        shell: cmd
+        run: |
+          if exist C:\ToolCache (rmdir C:\ToolCache)
+          mklink /J C:\ToolCache "C:\Hosted Tool Cache"
+
+      - name: Set AGENT_TOOLSDIRECTORY to junction
+        shell: powershell
+        run: |
+          echo "AGENT_TOOLSDIRECTORY=C:\ToolCache" >> $env:GITHUB_ENV
+
+      - name: Clear any cached Python
+        shell: powershell
+        run: |
+          $pythonDir = Join-Path $env:AGENT_TOOLSDIRECTORY "Python"
+          if (Test-Path $pythonDir) {
+            Remove-Item $pythonDir -Recurse -Force
+            Write-Host "Cleared $pythonDir"
+          }
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.14.3"
+
+      - name: Verify installation
+        shell: powershell
+        run: |
+          python --version
+          python -m pip --version
