@@ -1,4 +1,4 @@
-name: "Workaround - Directory junction"
+name: "Workaround - Github hosted - Directory junction"
 
 on:
   workflow_dispatch:

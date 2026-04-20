@@ -1,0 +1,55 @@
+name: "Reproduce #1290 — Workaround-  (Directory Junction) - Self-hosted"
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+jobs:
+  reproduce:
+    runs-on: self-hosted
+    env:
+      AGENT_TOOLSDIRECTORY: "C:\\Program Files\\HostedTools"
+
+    steps:
+      - name: Ensure spaced tool cache directory exists
+        shell: powershell
+        run: |
+          New-Item -ItemType Directory -Path $env:AGENT_TOOLSDIRECTORY -Force
+
+      - name: Clear cached Python to force fresh install
+        shell: powershell
+        run: |
+          $pythonDir = Join-Path $env:AGENT_TOOLSDIRECTORY "Python"
+          if (Test-Path $pythonDir) {
+            Remove-Item $pythonDir -Recurse -Force
+            Write-Host "Cleared $pythonDir"
+          }
+
+      - name: Create directory junction to eliminate spaces
+        shell: cmd
+        run: |
+          if exist C:\ToolCache (rmdir C:\ToolCache)
+          mklink /J C:\ToolCache "C:\Program Files\HostedTools"
+
+      - name: Set AGENT_TOOLSDIRECTORY to junction path
+        shell: powershell
+        run: |
+          echo "AGENT_TOOLSDIRECTORY=C:\ToolCache" >> $env:GITHUB_ENV
+
+      - name: Show environment
+        shell: powershell
+        run: |
+          Write-Host "AGENT_TOOLSDIRECTORY : $env:AGENT_TOOLSDIRECTORY"
+          Write-Host "RUNNER_TOOL_CACHE    : $env:RUNNER_TOOL_CACHE"
+
+      - name: Setup Python (should succeed with junction)
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.14.3"
+
+      - name: Verify
+        shell: powershell
+        run: |
+          python --version
+          python -m pip --version
