@@ -17,10 +17,10 @@ jobs:
       - name: Create junction to bypass spaces in tool cache path
         shell: powershell
         run: |
-          if not exist "C:\Program Files\HostedTools" mkdir "C:\Program Files\HostedTools"
-          if exist C:\ToolCache (rmdir C:\ToolCache)
-          mklink /J C:\ToolCache "C:\Program Files\HostedTools"
-          echo AGENT_TOOLSDIRECTORY=C:\ToolCache>> "%GITHUB_ENV%"
+          if (-not (Test-Path "C:\Program Files\HostedTools")) { New-Item -ItemType Directory -Path "C:\Program Files\HostedTools" }
+          if (Test-Path "C:\ToolCache") { cmd /c rmdir C:\ToolCache }
+          cmd /c mklink /J C:\ToolCache "C:\Program Files\HostedTools"
+          "AGENT_TOOLSDIRECTORY=C:\ToolCache" | Out-File -FilePath $env:GITHUB_ENV -Append
 
       - name: Setup Python
         uses: actions/setup-python@v6
