@@ -5,7 +5,8 @@ on:
   push:
     branches: [main]
 
-verify:
+jobs:
+  verify:
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
