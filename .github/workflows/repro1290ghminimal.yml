@@ -15,12 +15,6 @@ jobs:
 
     steps:
 
-      - name: Create spaced tool cache directory
-        shell: powershell
-        run: |
-          New-Item -ItemType Directory -Path "C:\Hosted Tool Cache" -Force | Out-Null
-          Write-Host "Created: C:\Hosted Tool Cache"
-
       - name: Create junction to bypass spaces in tool cache path
         shell: powershell
         run: |
@@ -38,7 +32,7 @@ jobs:
         with:
           python-version: "3.14.3"
           cache: "pip"
-          cache-dependency-path: "requirements.txt"   # <-- add this
+          cache-dependency-path: "requirements.txt"  
 
 
       - name: Verify
