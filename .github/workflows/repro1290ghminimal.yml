@@ -14,12 +14,13 @@ jobs:
         os: [windows-latest, windows-2025, windows-2022, windows-2025-vs2026, windows-11-arm]
 
     steps:
+
       - name: Create junction to bypass spaces in tool cache path
         shell: powershell
         run: |
-          if (-not (Test-Path "C:\Program Files\HostedTools")) { New-Item -ItemType Directory -Path "C:\Program Files\HostedTools" }
+          if (-not (Test-Path "C:\Hosted Tool Cache")) { New-Item -ItemType Directory -Path "C:\Hosted Tool Cache" }
           if (Test-Path "C:\ToolCache") { cmd /c rmdir C:\ToolCache }
-          cmd /c mklink /J C:\ToolCache "C:\Program Files\HostedTools"
+          cmd /c mklink /J C:\ToolCache "C:\Hosted Tool Cache"
           "AGENT_TOOLSDIRECTORY=C:\ToolCache" | Out-File -FilePath $env:GITHUB_ENV -Append
 
       - name: Setup Python
