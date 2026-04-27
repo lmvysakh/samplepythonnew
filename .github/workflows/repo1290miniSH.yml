@@ -1,0 +1,33 @@
+
+name: "Self-hosted - Directory Junction - Minimal"
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+jobs:
+  reproduce:
+    runs-on: self-hosted
+    
+    steps:
+      - name: Create junction to bypass spaces in tool cache path
+        shell: powershell
+        run: |
+          if (-not (Test-Path "C:\Program Files\HostedTools")) { New-Item -ItemType Directory -Path "C:\Program Files\HostedTools" }
+          if (Test-Path "C:\ToolCache") { cmd /c rmdir C:\ToolCache }
+          cmd /c mklink /J C:\ToolCache "C:\Program Files\HostedTools"
+          "AGENT_TOOLSDIRECTORY=C:\ToolCache" | Out-File -FilePath $env:GITHUB_ENV -Append
+
+
+      - name: Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.14.3"
+
+
+      - name: Verify
+        shell: powershell
+        run: |
+          python --version
+          python -m pip --version
