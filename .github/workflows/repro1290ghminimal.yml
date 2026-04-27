@@ -15,24 +15,29 @@ jobs:
 
     steps:
 
-      # - name: Create junction to bypass spaces in tool cache path
-      #   shell: powershell
-      #   run: |
-      #     if (-not (Test-Path "C:\Hosted Tool Cache")) { New-Item -ItemType Directory -Path "C:\Hosted Tool Cache" }
-      #     if (Test-Path "C:\ToolCache") { cmd /c rmdir C:\ToolCache }
-      #     cmd /c mklink /J C:\ToolCache "C:\Hosted Tool Cache"
-      #     "AGENT_TOOLSDIRECTORY=C:\ToolCache" | Out-File -FilePath $env:GITHUB_ENV -Append
+      - name: Create junction to bypass spaces in tool cache path
+        shell: powershell
+        run: |
+          if (-not (Test-Path "C:\Hosted Tool Cache")) { New-Item -ItemType Directory -Path "C:\Hosted Tool Cache" }
+          if (Test-Path "C:\ToolCache") { cmd /c rmdir C:\ToolCache }
+          cmd /c mklink /J C:\ToolCache "C:\Hosted Tool Cache"
+          "AGENT_TOOLSDIRECTORY=C:\ToolCache" | Out-File -FilePath $env:GITHUB_ENV -Append
 
 
-      - name: Checkout repository
-        uses: actions/checkout@v5
+      - name: Clear any cached Python
+        shell: powershell
+        run: |
+          $pythonDir = Join-Path $env:AGENT_TOOLSDIRECTORY "Python"
+          if (Test-Path $pythonDir) {
+            Remove-Item $pythonDir -Recurse -Force
+            Write-Host "Cleared $pythonDir"
+          }
 
       - name: Setup Python
         uses: actions/setup-python@v6
         with:
           python-version: "3.13"
-          # cache: "pip"
-          # cache-dependency-path: "requirements.txt"  
+
 
 
       - name: Verify
