@@ -13,7 +13,7 @@ jobs:
       matrix:
         os: [ubuntu-latest, ubuntu-24.04, ubuntu-22.04, macos-latest, macos-15, macos-14, macos-13]
 
-      steps:
+    steps:
       - name: Set spaced tool cache path
         run: |
           echo "AGENT_TOOLSDIRECTORY=${{ runner.temp }}/Hosted Tool Cache" >> "$GITHUB_ENV"
