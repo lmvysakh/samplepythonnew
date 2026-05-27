@@ -16,7 +16,7 @@ jobs:
     steps:
       - name: Set spaced tool cache path
         run: |
-          echo "AGENT_TOOLSDIRECTORY=${{ runner.temp }}/Hosted Tool Cache" >> "$GITHUB_ENV"
+          echo "AGENT_TOOLSDIRECTORY=${{ runner.temp }}/Hosted Tool Sample" >> "$GITHUB_ENV"
 
       - name: Create spaced tool cache directory
         run: |
