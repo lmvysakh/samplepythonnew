@@ -2,8 +2,8 @@ name: Reproduce 1290 — Linux/macOS spaces-in-path test
 
 on:
   workflow_dispatch:
-  push:
-    branches: [main]
+  # push:
+  #   branches: [main]
 
 jobs:
   verify:
@@ -16,7 +16,7 @@ jobs:
     steps:
       - name: Set spaced tool cache path
         run: |
-          echo "AGENT_TOOLSDIRECTORY=${{ runner.temp }}/Hosted Tool Sample" >> "$GITHUB_ENV"
+          echo "AGENT_TOOLSDIRECTORY=${{ runner.temp }}/Hosted Tool Cache" >> "$GITHUB_ENV"
 
       - name: Create spaced tool cache directory
         run: |
