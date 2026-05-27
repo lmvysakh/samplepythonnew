@@ -1,0 +1,41 @@
+name: Reproduce 1290 — Linux/macOS spaces-in-path test
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+jobs:
+  verify:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, ubuntu-24.04, ubuntu-22.04, macos-latest, macos-15, macos-14, macos-13]
+
+    env:
+      AGENT_TOOLSDIRECTORY: "${{ runner.temp }}/Hosted Tool Cache"
+
+    steps:
+      - name: Create spaced tool cache directory
+        run: |
+          mkdir -p "$AGENT_TOOLSDIRECTORY"
+          echo "Created: $AGENT_TOOLSDIRECTORY"
+
+      - name: Clear any cached Python
+        run: |
+          PYTHON_DIR="$AGENT_TOOLSDIRECTORY/Python"
+          if [ -d "$PYTHON_DIR" ]; then
+            rm -rf "$PYTHON_DIR"
+            echo "Cleared $PYTHON_DIR"
+          fi
+
+      - name: Setup Python using forked setup-python
+        uses: lmvysakh/setup-python@check_1290
+        with:
+          python-version: "3.14.3"
+
+      - name: Verify installation
+        run: |
+          python --version
+          python -m pip --version
