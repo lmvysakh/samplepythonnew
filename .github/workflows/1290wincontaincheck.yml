@@ -1,0 +1,43 @@
+name: "Reproduce 1290 - Container Check"
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  container-with-spaces:
+    runs-on: ubuntu-latest
+    container:
+      image: ubuntu:24.04
+
+    steps:
+      - name: Install prerequisites
+        run: |
+          apt-get update
+          apt-get install -y curl ca-certificates
+
+      - name: Create spaced tool cache directory
+        shell: powershell
+        run: |
+          New-Item -ItemType Directory -Path $env:AGENT_TOOLSDIRECTORY -Force | Out-Null
+          Write-Host "Created: $env:AGENT_TOOLSDIRECTORY"
+      - name: Clear any cached Python
+        shell: powershell
+        run: |
+          $pythonDir = Join-Path $env:AGENT_TOOLSDIRECTORY "Python"
+          if (Test-Path $pythonDir) {
+            Remove-Item $pythonDir -Recurse -Force
+            Write-Host "Cleared $pythonDir"
+          }
+      - name: Setup Python using forked setup-python
+        uses: actions/setup-python@v6
+        # uses: lmvysakh/setup-python@check_1290
+        with:
+          python-version: "3.12"
+
+      - name: Verify installation
+        shell: powershell
+        run: |
+          python --version
+          python -m pip --version
