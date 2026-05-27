@@ -11,7 +11,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, ubuntu-24.04, ubuntu-22.04, macos-latest, macos-15, macos-14, macos-13]
+        os: [ubuntu-latest, macos-latest]
 
     steps:
       - name: Set spaced tool cache path
