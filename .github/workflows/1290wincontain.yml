@@ -1,0 +1,33 @@
+name: "Reproduce 1290 - Container"
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  container-with-spaces:
+    runs-on: ubuntu-latest
+    container:
+      image: ubuntu:24.04
+
+    steps:
+      - name: Install prerequisites
+        run: |
+          apt-get update
+          apt-get install -y curl ca-certificates
+
+      - name: Set spaced tool cache path
+        run: |
+          echo "AGENT_TOOLSDIRECTORY=/tmp/Hosted Tool Cache" >> "$GITHUB_ENV"
+
+      - name: Create spaced tool cache directory
+        run: |
+          mkdir -p "$AGENT_TOOLSDIRECTORY"
+          echo "Created: $AGENT_TOOLSDIRECTORY"
+
+      - name: Attempt to setup Python
+        uses: lmvysakh/setup-python@check_1290
+        with:
+          python-version: "3.14.3"
+        continue-on-error: true
