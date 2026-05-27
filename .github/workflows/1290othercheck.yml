@@ -32,7 +32,7 @@ jobs:
           fi
 
       - name: Setup Python using forked setup-python
-        uses: actions/python@v6
+        uses: actions/setup-python@v6
         # uses: lmvysakh/setup-python@check_1290
         with:
           python-version: "3.12"
