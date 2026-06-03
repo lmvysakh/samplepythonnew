@@ -19,6 +19,6 @@ jobs:
         # uses: lmvysakh/setup-python@1317_fix
         with:
           python-version: "3.10"
-          pip-version: "26.1.2"
+          pip-version: "25.0.1"
       
           
