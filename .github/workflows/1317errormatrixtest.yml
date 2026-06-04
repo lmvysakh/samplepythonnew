@@ -1,0 +1,27 @@
+name: Reproduce setup-python - 1317 - Matrix Test
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  reproduce:
+    runs-on: ${{ matrix.os }}
+    name: "Python ${{ matrix.python-version }} on ${{ matrix.os }}"
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        python-version: ["3.9", "3.10", "3.11", "3.12", "3.13", "3.14"]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Installing Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v6
+        # uses: lmvysakh/setup-python@1317_fix
+        with:
+          python-version: "${{ matrix.python-version }}"
+          pip-version: "25.0.1"
