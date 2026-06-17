@@ -28,8 +28,8 @@ jobs:
         uses: actions/checkout@v6
 
       - name: Installing Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v6
-        # uses: lmvysakh/setup-python@1317_fix_annotation
+        # uses: actions/setup-python@v6
+        uses: lmvysakh/setup-python@1317_fix_annotation
         with:
           python-version: ${{ matrix.python-version }}
           pip-version: "25.0.1"
