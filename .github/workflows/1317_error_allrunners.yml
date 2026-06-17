@@ -1,4 +1,4 @@
-name: Reproduce setup-python - 1317 - all runners
+name: Reproduce setup-python - 1317
 
 on:
   push:
@@ -9,7 +9,7 @@ on:
 jobs:
   reproduce:
     runs-on: ${{ matrix.os }}
-    name: "Reproduce error - ${{ matrix.os }}"
+    name: "Checking error - ${{ matrix.os }} - Python ${{ matrix.python-version }}"
     strategy:
       fail-fast: false
       matrix:
@@ -20,13 +20,16 @@ jobs:
           - macos-15-intel
           - windows-11-arm
           - ubuntu-24-arm
+        python-version:
+          - "3.10"
+          - "3.12"
     steps:
       - name: Checkout
         uses: actions/checkout@v6
 
-      - name: Installing Python 3.10
+      - name: Installing Python ${{ matrix.python-version }}
         uses: actions/setup-python@v6
         # uses: lmvysakh/setup-python@1317_fix_annotation
         with:
-          python-version: "3.10"
+          python-version: ${{ matrix.python-version }}
           pip-version: "25.0.1"
