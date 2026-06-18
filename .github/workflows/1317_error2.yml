@@ -1,0 +1,49 @@
+name: Test Forced Error - Stderr Path
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test-forced-stderr-error:
+    name: Force setup.sh failure (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          repository: lmvysakh/setup-python
+          ref: 1317_fix_annotation
+
+      # Fill up the target directory to cause permission/space issues
+      # Or remove bash temporarily to force script execution failure
+      - name: Make /opt read-only to force setup.sh failure
+        run: |
+          sudo mkdir -p /opt/hostedtoolcache
+          sudo chmod 000 /opt/hostedtoolcache
+        shell: bash
+
+      - name: Setup Python (should fail in setup.sh with stderr output)
+        id: setup-python
+        uses: ./
+        continue-on-error: true
+        with:
+          python-version: '3.11.9'
+
+      - name: Restore permissions
+        if: always()
+        run: sudo chmod 755 /opt/hostedtoolcache
+        shell: bash
+
+      - name: Verify failure and check annotations
+        run: |
+          echo "Setup python outcome: ${{ steps.setup-python.outcome }}"
+          if [ "${{ steps.setup-python.outcome }}" == "failure" ]; then
+            echo "SUCCESS: setup-python failed — stderr lines should appear as RED error annotations"
+          else
+            echo "INFO: setup-python succeeded — stderr lines (if any) should appear as YELLOW warning annotations"
+          fi
+        shell: bash
