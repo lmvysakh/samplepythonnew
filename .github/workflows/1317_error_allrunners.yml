@@ -33,4 +33,4 @@ jobs:
         uses: lmvysakh/setup-python@check_1317_fix
         with:
           python-version: ${{ matrix.python-version }}
-          pip-version: "25.0.1"
+          pip-version: "25.0.1" 
