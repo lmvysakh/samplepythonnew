@@ -27,7 +27,7 @@ jobs:
         uses: lmvysakh/setup-python@check_1317_fix
         continue-on-error: true
         with:
-          python-version: '3.11.9'
+          python-version: '3.12.3'
 
       - name: Restore permissions
         if: always()
