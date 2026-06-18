@@ -2,6 +2,10 @@ name: Test Forced Error - Stderr Path
 
 on:
   workflow_dispatch:
+  on:
+    push:
+      branches:
+        - main
 
 jobs:
   test-forced-stderr-error:
