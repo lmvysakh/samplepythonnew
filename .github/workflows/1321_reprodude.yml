@@ -16,7 +16,8 @@ jobs:
 
     steps:
       - name: Set up Python 3.15.0-beta.2 (free-threaded)
-        uses: actions/setup-python@v6
+        # uses: actions/setup-python@v6
+        uses: lmvysakh/setup-python@check_1321_issue
         with:
           python-version: '3.15.0-beta.2'
           freethreaded: true
@@ -32,9 +33,3 @@ jobs:
           echo "Calling PyObject_Realloc(NULL, 128) via ctypes..."
           echo "This should segfault on the affected build."
           python -c 'import ctypes; ctypes.pythonapi.PyObject_Realloc(0, 128)'
-
-      - name: Alternative reproduction - NumPy import (optional)
-        if: failure()
-        run: |
-          pip install numpy
-          python -c 'from numpy import random'
