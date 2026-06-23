@@ -1,0 +1,40 @@
+name: Reproduce Issue 1321 - PyObject_Realloc Segfault
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  reproduce-segfault:
+    name: Reproduce PyObject_Realloc segfault on Ubuntu 22.04
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Set up Python 3.15.0-beta.2 (free-threaded)
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.15.0-beta.2'
+          freethreaded: true
+
+      - name: Verify Python version
+        run: |
+          python --version
+          python -VV
+          python -c "import sys; print(f'Free-threaded: {not sys._is_gil_enabled()}')"
+
+      - name: Reproduce segfault - PyObject_Realloc with NULL pointer
+        run: |
+          echo "Calling PyObject_Realloc(NULL, 128) via ctypes..."
+          echo "This should segfault on the affected build."
+          python -c 'import ctypes; ctypes.pythonapi.PyObject_Realloc(0, 128)'
+
+      - name: Alternative reproduction - NumPy import (optional)
+        if: failure()
+        run: |
+          pip install numpy
+          python -c 'from numpy import random'
