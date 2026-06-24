@@ -20,7 +20,7 @@ jobs:
         # uses: lmvysakh/setup-python@check_1321_issue
         with:
           python-version: '3.15.0-beta.3'
-          freethreaded: true
+          # freethreaded: true
 
       - name: Verify Python version
         run: |
