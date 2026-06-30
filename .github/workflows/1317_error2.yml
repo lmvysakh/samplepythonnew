@@ -42,4 +42,4 @@ jobs:
           else
             echo "INFO: setup-python did not fail as expected"
           fi
-        shell: bash 
+        shell: bash  
