@@ -1,4 +1,4 @@
-name: Test Error Scenario 2
+name: Test Error Scenario 2 - Disk full
 
 on:
   workflow_dispatch:
@@ -10,17 +10,15 @@ jobs:
   test-error:
     runs-on: ubuntu-latest
     steps:
-      - name: Remove cached Python and make temp directory read-only
+      - name: Remove cached Python and fill up disk
         run: |
-          # Remove cached Python so setup-python is forced to re-install
           sudo rm -rf /opt/hostedtoolcache/Python/3.12.*
-          # Make the temp directory read-only so extractTar output can't be modified
-          # but setup.sh will fail because bash can't write to the expected paths
-          sudo chmod 000 /opt/hostedtoolcache
+          # Create a small tmpfs mount over the tool cache to simulate disk full
+          sudo mount -t tmpfs -o size=1M tmpfs /opt/hostedtoolcache
 
       - name: Setup Python
         id: setup
-         # uses: lmvysakh/setup-python@1317_fix_annotation
+        # uses: lmvysakh/setup-python@1317_fix_annotation
         # uses: lmvysakh/setup-python@1317_alternate_fix
         uses:  actions/setup-python@v6 
         # uses: lmvysakh/setup-python@1317_alternate_again
@@ -28,8 +26,9 @@ jobs:
           python-version: '3.12'
         continue-on-error: true
 
-      - name: Restore permissions
-        run: sudo chmod 755 /opt/hostedtoolcache
+      - name: Restore mount
+        if: always()
+        run: sudo umount /opt/hostedtoolcache || true
 
       - name: Verify outcome
         run: |
