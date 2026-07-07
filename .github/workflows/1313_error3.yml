@@ -1,0 +1,43 @@
+name: Test Error Scenario 2 
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  test-error:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Corrupt setup.sh to produce a non-warning stderr error
+        run: |
+          PYTHON_DIR=$(find /opt/hostedtoolcache/Python -maxdepth 2 -name 'x64' -type d | head -1)
+          SETUP_SCRIPT="$PYTHON_DIR/setup.sh"
+          if [ -f "$SETUP_SCRIPT" ]; then
+            cat > "$SETUP_SCRIPT" << 'SCRIPT'
+            #!/bin/bash
+            echo "ERROR: setup script integrity check failed, cannot continue" >&2
+            exit 1
+          SCRIPT
+            chmod +x "$SETUP_SCRIPT"
+          fi
+
+      - name: Setup Python
+        id: setup
+        # uses: lmvysakh/setup-python@1317_fix_annotation
+        # uses: lmvysakh/setup-python@1317_alternate_fix
+        uses:  actions/setup-python@v6 
+        # uses: lmvysakh/setup-python@1317_alternate_again
+        with:
+          python-version: '3.12'
+        continue-on-error: true
+
+      - name: Verify outcome
+        run: |
+          echo "Setup python outcome: ${{ steps.setup.outcome }}"
+          if [ "${{ steps.setup.outcome }}" == "failure" ]; then
+            echo "SUCCESS: setup-python failed — stderr should appear as RED error annotation"
+          else
+            echo "UNEXPECTED: setup-python did not fail as expected"
+          fi
