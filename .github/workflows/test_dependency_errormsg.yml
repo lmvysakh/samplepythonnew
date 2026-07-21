@@ -10,13 +10,13 @@ jobs:
   test-improved-error-message:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v7
+      # - name: Checkout repository
+      #   uses: actions/checkout@v7
 
       - name: Setup Python with invalid cache-dependency-path
         id: setup-python
-        uses: aroudaki70/setup-python@error-message-update
-        # uses: actions/setup-python@v7
+        # uses: aroudaki70/setup-python@error-message-update
+        uses: actions/setup-python@v7
 
         with:
           python-version: '3.12'
