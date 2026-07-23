@@ -13,11 +13,11 @@ jobs:
 
       - name: Setup Python (should fail)
         id: setup-python
-        # uses: actions/setup-python@kmasuda050/feature/python-version-required
-        uses: actions/setup-python@v7
-        with:
-          python-version: "3.12"
-        # env:
-        #   PYTHON_VERSION_REQUIRED: true
+        uses: kmasuda050/setup-python@feature/python-version-required
+        # uses: actions/setup-python@v7
+        # with:
+        #   python-version: "3.12"
+        env:
+          PYTHON_VERSION_REQUIRED: true
         continue-on-error: true
 
