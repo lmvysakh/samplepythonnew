@@ -15,9 +15,9 @@ jobs:
           id: setup-python
           # uses: kmasuda050/setup-python@feature/python-version-required
           uses: actions/setup-python@v7
-          # with:
-          #   python-version: "3.12"
-          env:
-            PYTHON_VERSION_REQUIRED: true
+          with:
+            python-version: 
+          # env:
+          #   PYTHON_VERSION_REQUIRED: true
           continue-on-error: true
 
