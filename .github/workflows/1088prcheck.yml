@@ -1,0 +1,23 @@
+name: 1088 PR Basic Test
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ "main" ]
+
+jobs:
+    name: "Basic PR Test"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Setup Python (should fail)
+        id: setup-python
+        # uses: actions/setup-python@kmasuda050/feature/python-version-required
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+        # env:
+        #   PYTHON_VERSION_REQUIRED: true
+        continue-on-error: true
+
