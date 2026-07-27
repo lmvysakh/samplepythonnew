@@ -10,7 +10,7 @@ jobs:
   # TEST 1: PYTHON_VERSION_REQUIRED=true WITHOUT python-version
   # Expected: Action FAILS with error
   should-fail-when-required-and-missing:
-    name: "Should FAIL — required=true, no version (${{ matrix.os }})"
+    name: "Should FAIL - required=true, no version (${{ matrix.os }})"
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -31,7 +31,7 @@ jobs:
   # TEST 2: PYTHON_VERSION_REQUIRED=true WITH python-version
   # Expected: Action SUCCEEDS (version is provided)
   should-pass-when-required-and-provided:
-    name: "Should PASS — required=true, version provided (${{ matrix.os }})"
+    name: "Should PASS - required=true, version provided (${{ matrix.os }})"
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -52,7 +52,7 @@ jobs:
   # TEST 3: NO PYTHON_VERSION_REQUIRED, NO python-version
   # Expected: Action SUCCEEDS with a WARNING (existing behavior)
   should-warn-when-not-required-and-missing:
-    name: "Should WARN — env not set, no version (${{ matrix.os }})"
+    name: "Should WARN - env not set, no version (${{ matrix.os }})"
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -69,7 +69,7 @@ jobs:
   # TEST 4: PYTHON_VERSION_REQUIRED=false, NO python-version
   # Expected: Action SUCCEEDS with a WARNING (treated as not required)
   should-warn-when-explicitly-false:
-    name: "Should WARN — required=false, no version (${{ matrix.os }})"
+    name: "Should WARN - required=false, no version (${{ matrix.os }})"
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -85,10 +85,10 @@ jobs:
           PYTHON_VERSION_REQUIRED: false
 
 
-  # TEST 5: Case sensitivity — PYTHON_VERSION_REQUIRED=True
+  # TEST 5: Case sensitivity - PYTHON_VERSION_REQUIRED=True
   # Expected: Action FAILS (PR accepts 'True')
   should-fail-with-capitalized-true:
-    name: "Should FAIL — required=True (capitalized) (${{ matrix.os }})"
+    name: "Should FAIL - required=True (capitalized) (${{ matrix.os }})"
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -105,10 +105,10 @@ jobs:
         continue-on-error: true
 
 
-  # TEST 6: Case sensitivity — PYTHON_VERSION_REQUIRED=TRUE
+  # TEST 6: Case sensitivity - PYTHON_VERSION_REQUIRED=TRUE
   # Expected: Action FAILS (PR accepts 'TRUE')
   should-fail-with-uppercase-true:
-    name: "Should FAIL — required=TRUE (uppercase) (${{ matrix.os }})"
+    name: "Should FAIL - required=TRUE (uppercase) (${{ matrix.os }})"
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -126,11 +126,11 @@ jobs:
 
 
 
-  # TEST 7: Edge case — PYTHON_VERSION_REQUIRED=tRuE (mixed case)
+  # TEST 7: Edge case - PYTHON_VERSION_REQUIRED=tRuE (mixed case)
   # Expected: Action SUCCEEDS with warning (PR does NOT handle this)
   # This test documents the known limitation of the PR
   should-warn-with-mixed-case-true:
-    name: "Edge case — required=tRuE (mixed case, known gap) (${{ matrix.os }})"
+    name: "Edge case - required=tRuE (mixed case, known gap) (${{ matrix.os }})"
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -146,10 +146,10 @@ jobs:
           PYTHON_VERSION_REQUIRED: "tRuE"
 
 
-  # TEST 8: Edge case — PYTHON_VERSION_REQUIRED=yes
+  # TEST 8: Edge case - PYTHON_VERSION_REQUIRED=yes
   # Expected: Action SUCCEEDS with warning (not a recognized truthy value)
   should-warn-with-yes:
-    name: "Edge case — required=yes (not recognized) (${{ matrix.os }})"
+    name: "Edge case - required=yes (not recognized) (${{ matrix.os }})"
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -158,16 +158,16 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      - name: Setup Python (should succeed — 'yes' is not recognized)
+      - name: Setup Python (should succeed - 'yes' is not recognized)
         id: setup-python
         uses: kmasuda050/setup-python@feature/python-version-required
         env:
           PYTHON_VERSION_REQUIRED: "yes"
 
-  # TEST 9: Edge case — PYTHON_VERSION_REQUIRED=1
+  # TEST 9: Edge case - PYTHON_VERSION_REQUIRED=1
   # Expected: Action SUCCEEDS with warning (not a recognized truthy value)
   should-warn-with-one:
-    name: "Edge case — required=1 (not recognized) (${{ matrix.os }})"
+    name: "Edge case - required=1 (not recognized) (${{ matrix.os }})"
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -176,7 +176,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      - name: Setup Python (should succeed — '1' is not recognized)
+      - name: Setup Python (should succeed - '1' is not recognized)
         id: setup-python
         uses: kmasuda050/setup-python@feature/python-version-required
         env:
@@ -185,7 +185,7 @@ jobs:
   # TEST 10: PYTHON_VERSION_REQUIRED=true WITH python-version-file
   # Expected: Action SUCCEEDS (version resolved from file)
   should-pass-when-required-and-version-file-provided:
-    name: "Should PASS — required=true, version from file (${{ matrix.os }})"
+    name: "Should PASS - required=true, version from file (${{ matrix.os }})"
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -197,7 +197,7 @@ jobs:
       - name: Create .python-version file
         run: echo "3.12" > .python-version
 
-      - name: Setup Python (should succeed — version comes from file)
+      - name: Setup Python (should succeed - version comes from file)
         id: setup-python
         uses: kmasuda050/setup-python@feature/python-version-required
         with:
@@ -206,10 +206,10 @@ jobs:
           PYTHON_VERSION_REQUIRED: true
 
 
-  # TEST 11: Empty string value — PYTHON_VERSION_REQUIRED=""
+  # TEST 11: Empty string value - PYTHON_VERSION_REQUIRED=""
   # Expected: Action SUCCEEDS with warning (empty = not set)
   should-warn-with-empty-string:
-    name: "Should WARN — required='' (empty string) (${{ matrix.os }})"
+    name: "Should WARN - required='' (empty string) (${{ matrix.os }})"
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
