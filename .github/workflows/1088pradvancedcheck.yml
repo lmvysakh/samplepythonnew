@@ -2,7 +2,7 @@ name: Test PYTHON_VERSION_REQUIRED feature (PR #1088)
 
 on:
   workflow_dispatch:
-  push:
+  push: 
     branches:
       - main
 
