@@ -1,0 +1,117 @@
+name: Test Python with and without tool-cache
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  # Job 1: Normal behavior
+  baseline:
+    name: "Baseline — tool-cache intact"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Show tool-cache Python versions
+        run: |
+          echo "=== Tool-cache Python versions ==="
+          ls -1 "${RUNNER_TOOL_CACHE}/Python/"
+
+      - name: Setup Python (no version)
+        uses: actions/setup-python@v7
+
+      - name: Show Python details
+        run: |
+          echo "Version: $(python --version)"
+          echo "Path: $(which python)"
+
+  # Job 2: Clear ALL Python from tool-cache, then run setup-python
+  cleared-toolcache:
+    name: "Cleared — tool-cache emptied"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Show tool-cache before clearing
+        run: |
+          echo "=== Before ==="
+          ls -1 "${RUNNER_TOOL_CACHE}/Python/"
+
+      - name: Clear Python from tool-cache
+        run: |
+          sudo rm -rf "${RUNNER_TOOL_CACHE}/Python"
+          echo "=== After ==="
+          ls -1 "${RUNNER_TOOL_CACHE}/Python/" 2>/dev/null || echo "Tool-cache Python deleted"
+
+      - name: Setup Python (no version, no tool-cache)
+        uses: actions/setup-python@v7
+
+      - name: Show Python details
+        run: |
+          echo "Version: $(python --version 2>&1 || python3 --version 2>&1 || echo 'No python')"
+          echo "Path: $(which python 2>/dev/null || which python3 2>/dev/null || echo 'Not found')"
+
+  # Job 3: Clear tool-cache AND remove system Python from PATH
+  no-python-at-all:
+    name: "Nuclear — no Python anywhere"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Show all Python before clearing
+        run: |
+          echo "=== Tool-cache ==="
+          ls -1 "${RUNNER_TOOL_CACHE}/Python/"
+          echo "=== System Python ==="
+          which -a python python3 2>/dev/null
+          python3 --version 2>/dev/null
+
+      - name: Remove ALL Python
+        run: |
+          # Remove tool-cache Python
+          sudo rm -rf "${RUNNER_TOOL_CACHE}/Python"
+
+          # Remove system Python from PATH
+          sudo rm -f /usr/bin/python3 /usr/bin/python
+          sudo rm -f /usr/local/bin/python3 /usr/local/bin/python
+
+          echo "=== After removal ==="
+          which python 2>/dev/null || echo "No python on PATH"
+          which python3 2>/dev/null || echo "No python3 on PATH"
+
+      - name: Setup Python (no version, nothing available)
+        id: setup-python
+        uses: actions/setup-python@v7
+        continue-on-error: true
+
+      - name: Show outcome
+        run: |
+          echo "Outcome: ${{ steps.setup-python.outcome }}"
+          python --version 2>&1 || python3 --version 2>&1 || echo "No Python found at all"
+
+  # Job 4: Clear tool-cache, then use PR branch with PYTHON_VERSION_REQUIRED
+  cleared-with-pr:
+    name: "Cleared + PR #1088 (PYTHON_VERSION_REQUIRED=true)"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Clear Python from tool-cache
+        run: sudo rm -rf "${RUNNER_TOOL_CACHE}/Python"
+
+      - name: Setup Python (PR branch, required=true, no version)
+        id: setup-python
+        uses: kmasuda050/setup-python@feature/python-version-required
+        env:
+          PYTHON_VERSION_REQUIRED: true
+        continue-on-error: true
+
+      - name: Show outcome
+        run: |
+          echo "Outcome: ${{ steps.setup-python.outcome }}"
+          if [ "${{ steps.setup-python.outcome }}" == "failure" ]; then
+            echo " Correctly failed — no version specified and PYTHON_VERSION_REQUIRED=true"
+          else
+            echo " Succeeded despite PYTHON_VERSION_REQUIRED=true"
+          fi

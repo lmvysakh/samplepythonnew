@@ -20,4 +20,8 @@ jobs:
           env:
             PYTHON_VERSION_REQUIRED: true
           # continue-on-error: true
+        
+        - name: Check version
+          run: |
+            python --version
 
