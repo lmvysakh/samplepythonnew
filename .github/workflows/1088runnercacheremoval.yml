@@ -8,7 +8,7 @@ on:
 jobs:
   # Job 1: Normal behavior
   baseline:
-    name: "Baseline — tool-cache intact"
+    name: "With tool-cache intact"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
@@ -28,7 +28,7 @@ jobs:
 
   # Job 2: Clear ALL Python from tool-cache, then run setup-python
   cleared-toolcache:
-    name: "Cleared — tool-cache emptied"
+    name: "Cleared tool-cache"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
@@ -54,7 +54,7 @@ jobs:
 
   # Job 3: Clear tool-cache AND remove system Python from PATH
   no-python-at-all:
-    name: "Nuclear — no Python anywhere"
+    name: "Clear tool-cache and remove system Python from path"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
@@ -92,7 +92,7 @@ jobs:
 
   # Job 4: Clear tool-cache, then use PR branch with PYTHON_VERSION_REQUIRED
   cleared-with-pr:
-    name: "Cleared + PR #1088 (PYTHON_VERSION_REQUIRED=true)"
+    name: "Cleared tool-cache and checking with PR branch"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
