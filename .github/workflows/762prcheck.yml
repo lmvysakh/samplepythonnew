@@ -24,6 +24,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
           cache: "pip"
           cache-dependency-path: pyproject.toml
+          cache-save: false
 
       - name: Install base dependencies
         run: pip install -e .
