@@ -1,7 +1,7 @@
 # Test workflow using the current actions/setup-python (no cache-save option)
 # This demonstrates the problem: the heavy-extra job pollutes the cache for all jobs.
 
-name: Test setup-python (current)
+name: Test setup-python 
 
 on:
   push:
@@ -18,7 +18,8 @@ jobs:
       - uses: actions/checkout@v7
 
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v7
+        # uses: actions/setup-python@v7
+        uses: akx/setup-python@no-save-cache-options
         with:
           python-version: ${{ matrix.python-version }}
           cache: "pip"
