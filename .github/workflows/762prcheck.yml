@@ -1,0 +1,30 @@
+# Test workflow using the current actions/setup-python (no cache-save option)
+# This demonstrates the problem: the heavy-extra job pollutes the cache for all jobs.
+
+name: Test setup-python (current)
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  test-basic:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.11", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v7
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: "pip"
+          cache-dependency-path: pyproject.toml
+
+      - name: Install base dependencies
+        run: pip install -e .
+
+ 
