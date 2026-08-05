@@ -2,8 +2,8 @@
 name: "01 - Cache Bloat Demo (current setup-python)"
 
 on:
-  push:
-    branches: [main]
+  # push:
+  #   branches: [main]
   workflow_dispatch:
     inputs:
       run_heavy:
