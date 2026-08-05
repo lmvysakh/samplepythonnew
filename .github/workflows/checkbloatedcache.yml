@@ -1,0 +1,101 @@
+#Reproduce cache bloat issue with setup-python action
+name: "01 - Cache Bloat Demo (current setup-python)"
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      run_heavy:
+        description: "Run the heavy-extra job?"
+        type: boolean
+        default: true
+
+env:
+  PYTHON_VERSION: "3.12"
+
+jobs:
+  # --- Job 1: Installs only the lightweight base dependency ---
+  test-basic:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Set up Python (with cache)
+        uses: actions/setup-python@v7
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: "pip"
+
+      - name: Install base dependency only
+        run: |
+          pip install numpy
+          echo "--- Installed packages ---"
+          pip list
+          echo "--- Cache dir size ---"
+          du -sh $(pip cache dir) || true
+
+      - name: Show what will be cached
+        run: |
+          echo "pip cache dir contents:"
+          ls -lh $(pip cache dir)/wheels/ 2>/dev/null || echo "No wheels cached yet"
+          du -sh $(pip cache dir) || echo "Cache dir empty"
+
+  # --- Job 2: Installs base + heavy extra (scipy ~50MB) ---
+  # This bloats the cache for ALL subsequent runs.
+  test-heavy-extra:
+    if: ${{ inputs.run_heavy }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Set up Python (with cache)
+        uses: actions/setup-python@v7
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: "pip"
+
+      - name: Install base + heavy dependency
+        run: |
+          pip install numpy scipy
+          echo "--- Installed packages ---"
+          pip list
+          echo "--- Cache dir size (this will be saved!) ---"
+          du -sh $(pip cache dir) || true
+
+      - name: Show bloated cache that will be saved
+        run: |
+          echo "pip cache dir contents:"
+          ls -lh $(pip cache dir)/wheels/ 2>/dev/null || echo "No wheels"
+          du -sh $(pip cache dir)
+          echo ""
+          echo " This entire bloated cache will be saved in the post step!"
+          echo " Next time test-basic runs, it will restore scipy too (unnecessary)."
+
+  # --- Job 3: Runs after heavy job to show it now gets the bloated cache ---
+  test-basic-after-heavy:
+    needs: [test-heavy-extra]
+    if: ${{ inputs.run_heavy }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Set up Python (with cache - will restore bloated cache)
+        uses: actions/setup-python@v7
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: "pip"
+
+      - name: Install base dependency only
+        run: |
+          pip install numpy
+          echo "- Installed packages -"
+          pip list
+
+      - name: Show restored cache is bloated
+        run: |
+          echo "Cache dir size (restored from previous run):"
+          du -sh $(pip cache dir) || true
+          echo ""
+          echo " Notice: cache includes scipy wheels even though this job doesn't need them!"
+          ls -lh $(pip cache dir)/wheels/ 2>/dev/null || true
