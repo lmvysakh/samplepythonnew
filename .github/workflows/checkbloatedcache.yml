@@ -1,5 +1,5 @@
 #Reproduce cache bloat issue with setup-python action
-name: "01 - Cache Bloat Demo (current setup-python)"
+name: "Approach 01 - Cache Bloat Demo (current setup-python)"
 
 on:
   push:

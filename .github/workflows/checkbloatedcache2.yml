@@ -1,0 +1,51 @@
+name: "Approach 2 - Cache Bloat setup-python"
+
+on:
+  workflow_dispatch:
+
+env:
+  PYTHON_VERSION: "3.12"
+
+jobs:
+  # Job 1: Heavy job runs FIRST (no existing cache) — saves bloated cache
+  test-heavy-extra:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: "pip"
+          cache-dependency-path: requirements.txt
+
+      - name: Install base + heavy dependency
+        run: |
+          pip install numpy scipy
+          echo "--- Cache dir size (this will be saved!) ---"
+          du -sh $(pip cache dir) || true
+          ls -lh $(pip cache dir)/wheels/ 2>/dev/null || true
+
+  # Job 2: Basic job runs AFTER — restores the bloated cache
+  test-basic-after:
+    needs: [test-heavy-extra]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: "pip"
+          cache-dependency-path: requirements.txt
+
+      - name: Install base dependency only
+        run: |
+          pip install numpy
+          echo "--- Cache dir size (restored - should be bloated) ---"
+          du -sh $(pip cache dir) || true
+          echo ""
+          echo "Contents of cache (look for scipy wheels):"
+          ls -lh $(pip cache dir)/wheels/ 2>/dev/null || true
