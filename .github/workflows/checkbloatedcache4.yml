@@ -39,14 +39,9 @@ jobs:
           pip install numpy
           echo "--- Cache dir size (lean) ---"
           du -sh $(pip cache dir) || true
-
-      - name: Show cache contents
-        run: |
-          echo "--- Files in cache ---"
-          find $(pip cache dir) -name "*.whl" 2>/dev/null | head -20
           echo ""
-          echo "✅ Post step will save this lean cache."
-          echo "   Cache key is based on hash of 'requirements.txt' containing only 'numpy'"
+          echo " Post step will save this lean cache."
+          echo " Cache key is based on hash of 'requirements.txt' containing only 'numpy'"
 
       # Post step: no existing cache for this key → SAVES lean cache
 
@@ -86,16 +81,11 @@ jobs:
           pip install numpy scipy
           echo "--- Cache dir size (bloated!) ---"
           du -sh $(pip cache dir) || true
-
-      - name: Show what will be saved
-        run: |
-          echo "--- All wheel files in cache ---"
-          find $(pip cache dir) -name "*.whl" 2>/dev/null
           echo ""
-          echo "⚠️  Primary key is NEW (requirements.txt changed)"
-          echo "⚠️  Restore was via restore-keys (partial match)"
-          echo "⚠️  Post step WILL SAVE because restored key ≠ primary key"
-          echo "⚠️  This bloated cache (with scipy) is now saved!"
+          echo "  Primary key is NEW (requirements.txt changed)"
+          echo "  Restore was via restore-keys (partial match)"
+          echo "  Post step WILL SAVE because restored key ≠ primary key"
+          echo "  This bloated cache (with scipy) is now saved!"
 
       # Post step: restored key ≠ primary key → SAVES bloated cache
 
@@ -129,16 +119,4 @@ jobs:
           echo "--- Cache dir size ---"
           du -sh $(pip cache dir) || true
           echo ""
-          echo "--- Looking for scipy in restored cache ---"
-          SCIPY_FILES=$(find $(pip cache dir) -name "*scipy*" 2>/dev/null)
-          if [ -n "$SCIPY_FILES" ]; then
-            echo "$SCIPY_FILES"
-            echo ""
-            echo "   BLOAT CONFIRMED: scipy is in the cache!"
-            echo "   This job only needs numpy, but it restored scipy too."
-            echo "   This is wasted storage and bandwidth."
-            echo ""
-            echo "   This is the problem PR #762 solves."
-          else
-            echo " No scipy found (cache might have been cleared)"
-          fi
+          
