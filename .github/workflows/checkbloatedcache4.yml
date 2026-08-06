@@ -91,7 +91,7 @@ jobs:
 
   # ============================================================
   # PHASE 3: Run this third.
-  # A basic job that only needs numpy, but gets scipy from cache.
+  # A basic job that only needs numpy, but it restores the bloated cache from Phase 2 
   # ============================================================
   phase3-basic-gets-bloat:
     if: ${{ inputs.phase == 'phase3-basic-gets-bloated' }}
@@ -111,12 +111,12 @@ jobs:
           cache: "pip"
           cache-dependency-path: requirements.txt
 
-      - name: Install ONLY numpy (don't need scipy in this job)
+      - name: Install ONLY numpy
         run: pip install numpy
 
       - name: Check for bloat
         run: |
           echo "--- Cache dir size ---"
-          du -sh $(pip cache dir) || true
+          du -sh $(pip cache dir)  || true
           echo ""
           
