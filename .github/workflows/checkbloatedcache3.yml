@@ -1,0 +1,68 @@
+name: "Approach 3 - Cache Bloat Demo (correct scenario)"
+
+on:
+  workflow_dispatch:
+
+env:
+  PYTHON_VERSION: "3.12"
+
+jobs:
+  # This job simulates what happens when your cache key changes
+  # (e.g., you updated requirements.txt).
+  # We force a unique key using run_id so there's never an exact cache hit.
+  test-heavy-extra:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Create a dependency file (simulates a lockfile change)
+        run: |
+          echo "numpy" > requirements-ci.txt
+          echo "# cache-buster: ${{ github.run_id }}" >> requirements-ci.txt
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: "pip"
+          cache-dependency-path: requirements-ci.txt
+
+      - name: Install base + heavy dependency
+        run: |
+          pip install numpy scipy
+          echo "--- Cache dir size ---"
+          du -sh $(pip cache dir) || true
+
+      # Post step: key is NEW (due to run_id) → no exact match → SAVES bloated cache
+
+  # This job uses the SAME cache key, so it restores what heavy saved
+  test-basic-gets-bloat:
+    needs: [test-heavy-extra]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Create same dependency file (same key)
+        run: |
+          echo "numpy" > requirements-ci.txt
+          echo "# cache-buster: ${{ github.run_id }}" >> requirements-ci.txt
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: "pip"
+          cache-dependency-path: requirements-ci.txt
+
+      - name: Install ONLY numpy
+        run: pip install numpy
+
+      - name: Check — is scipy in my cache? (it shouldn't be, but it is!)
+        run: |
+          echo "--- Cache dir size ---"
+          du -sh $(pip cache dir) || true
+          echo ""
+          echo "--- Looking for scipy in cache ---"
+          find $(pip cache dir) -name "*scipy*" 2>/dev/null && \
+            echo " BLOAT: scipy is in cache even though this job doesn't need it!" || \
+            echo " No scipy found"
