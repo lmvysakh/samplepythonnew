@@ -28,7 +28,9 @@ jobs:
         run: echo "numpy" > requirements.txt
 
       - name: Set up Python
-        uses: actions/setup-python@v7
+        # uses: actions/setup-python@v7
+        uses: akx/setup-python@no-save-cache-options 
+        # checking default true scenario with PR branch
         with:
           python-version: ${{ env.PYTHON_VERSION }}
           cache: "pip"
@@ -64,7 +66,9 @@ jobs:
           echo "scipy" >> requirements.txt
 
       - name: Set up Python
-        uses: actions/setup-python@v7
+        # uses: actions/setup-python@v7
+        uses: akx/setup-python@no-save-cache-options
+       # checking default true scenario with PR branch
         with:
           python-version: ${{ env.PYTHON_VERSION }}
           cache: "pip"
@@ -105,7 +109,9 @@ jobs:
           echo "scipy" >> requirements.txt
 
       - name: Set up Python
-        uses: actions/setup-python@v7
+        # uses: actions/setup-python@v7
+        uses: akx/setup-python@no-save-cache-options
+      # checking default true scenario with PR branch
         with:
           python-version: ${{ env.PYTHON_VERSION }}
           cache: "pip"
