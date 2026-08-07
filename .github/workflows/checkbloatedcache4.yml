@@ -35,6 +35,7 @@ jobs:
           python-version: ${{ env.PYTHON_VERSION }}
           cache: "pip"
           cache-dependency-path: requirements.txt
+          cache-save: false
 
       - name: Install base dependency
         run: |
@@ -73,6 +74,7 @@ jobs:
           python-version: ${{ env.PYTHON_VERSION }}
           cache: "pip"
           cache-dependency-path: requirements.txt
+          cache-save: false
 
       # At this point:
       # - Primary key: setup-python-linux-3.12-pip-{hash of NEW requirements.txt}
@@ -116,6 +118,7 @@ jobs:
           python-version: ${{ env.PYTHON_VERSION }}
           cache: "pip"
           cache-dependency-path: requirements.txt
+          cache-save: false
 
       - name: Install ONLY numpy
         run: pip install numpy
