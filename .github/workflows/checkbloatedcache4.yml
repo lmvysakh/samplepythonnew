@@ -30,7 +30,7 @@ jobs:
       - name: Set up Python
         # uses: actions/setup-python@v7
         uses: akx/setup-python@no-save-cache-options 
-        # checking default true scenario with PR branch
+        # checking functionality scenario with PR branch
         with:
           python-version: ${{ env.PYTHON_VERSION }}
           cache: "pip"
@@ -69,12 +69,12 @@ jobs:
       - name: Set up Python
         # uses: actions/setup-python@v7
         uses: akx/setup-python@no-save-cache-options
-       # checking default true scenario with PR branch
+       # checking functionality scenario with PR branch - here lean cache needs to be saved
         with:
           python-version: ${{ env.PYTHON_VERSION }}
           cache: "pip"
           cache-dependency-path: requirements.txt
-          cache-save: false
+          cache-save: true
 
       # At this point:
       # - Primary key: setup-python-linux-3.12-pip-{hash of NEW requirements.txt}
@@ -113,7 +113,7 @@ jobs:
       - name: Set up Python
         # uses: actions/setup-python@v7
         uses: akx/setup-python@no-save-cache-options
-      # checking default true scenario with PR branch
+      # checking functionality scenario with PR branch
         with:
           python-version: ${{ env.PYTHON_VERSION }}
           cache: "pip"
