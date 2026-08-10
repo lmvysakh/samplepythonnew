@@ -26,7 +26,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      - name: Set up Python (NO built-in cache)
+      - name: Set up Python  
         uses: actions/setup-python@v7
         with:
           python-version: ${{ env.PYTHON_VERSION }}
@@ -51,11 +51,6 @@ jobs:
           pip install numpy
           echo "--- Cache dir size (lean) ---"
           du -sh $(pip cache dir) || true
-
-      - name: Show cache contents
-        run: |
-          echo "--- Wheel files in cache ---"
-          find $(pip cache dir) -name "*.whl" 2>/dev/null || echo "None"
           echo ""
           echo "Post step will save this lean cache via actions/cache"
 
@@ -70,7 +65,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      - name: Set up Python (NO built-in cache)
+      - name: Set up Python  
         uses: actions/setup-python@v7
         with:
           python-version: ${{ env.PYTHON_VERSION }}
@@ -109,7 +104,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      - name: Set up Python (NO built-in cache)
+      - name: Set up Python  
         uses: actions/setup-python@v7
         with:
           python-version: ${{ env.PYTHON_VERSION }}
