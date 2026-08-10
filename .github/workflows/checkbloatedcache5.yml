@@ -1,0 +1,138 @@
+name: "Fix Cache Bloat - Using actions/cache manually"
+
+on:
+  workflow_dispatch:
+    inputs:
+      phase:
+        description: "Which phase to run?"
+        type: choice
+        options:
+          - "phase1-save-lean-cache"
+          - "phase2-heavy-no-bloat"
+          - "phase3-verify-still-lean"
+
+env:
+  PYTHON_VERSION: "3.12"
+
+jobs:
+  # ============================================================
+  # PHASE 1: Saves a lean cache (numpy only).
+  # Uses actions/cache (full restore + save) since this is the
+  # job we WANT to save from.
+  # ============================================================
+  phase1-save-lean:
+    if: ${{ inputs.phase == 'phase1-save-lean-cache' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Set up Python (NO built-in cache)
+        uses: actions/setup-python@v7
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          # cache: "pip"  ← intentionally NOT using built-in cache
+
+      - name: Create requirements (v1)
+        run: echo "numpy" > requirements.txt
+
+      - name: Restore cache (if any)
+        uses: actions/cache@v6
+        with:
+          path: ~/.cache/pip
+          key: pip-${{ runner.os }}-${{ env.PYTHON_VERSION }}-${{ hashFiles('requirements.txt') }}
+          restore-keys: |
+            pip-${{ runner.os }}-${{ env.PYTHON_VERSION }}-
+
+      # actions/cache does both restore AND save (in post step)
+      # Since this is the lean job, we WANT it to save.
+
+      - name: Install base dependency
+        run: |
+          pip install numpy
+          echo "--- Cache dir size (lean) ---"
+          du -sh $(pip cache dir) || true
+
+      - name: Show cache contents
+        run: |
+          echo "--- Wheel files in cache ---"
+          find $(pip cache dir) -name "*.whl" 2>/dev/null || echo "None"
+          echo ""
+          echo "Post step will save this lean cache via actions/cache"
+
+  # ============================================================
+  # PHASE 2: Heavy job — uses actions/cache/restore ONLY.
+  # Restores the cache (to speed up numpy install), installs scipy,
+  # but does NOT save because we use restore-only.
+  # ============================================================
+  phase2-heavy-no-bloat:
+    if: ${{ inputs.phase == 'phase2-heavy-no-bloat' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Set up Python (NO built-in cache)
+        uses: actions/setup-python@v7
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Create requirements (v2 - updated lockfile)
+        run: |
+          echo "numpy" > requirements.txt
+          echo "scipy" >> requirements.txt
+
+      # KEY DIFFERENCE: using actions/cache/restore instead of actions/cache
+      # This ONLY restores — there is no post-step save!
+      - name: Restore cache (restore ONLY, no save)
+        uses: actions/cache/restore@v5
+        with:
+          path: ~/.cache/pip
+          key: pip-${{ runner.os }}-${{ env.PYTHON_VERSION }}-${{ hashFiles('requirements.txt') }}
+          restore-keys: |
+            pip-${{ runner.os }}-${{ env.PYTHON_VERSION }}-
+
+      - name: Install heavy dependencies
+        run: |
+          pip install numpy scipy
+          echo "--- Cache dir size (bloated locally) ---"
+          du -sh $(pip cache dir) || true
+          echo ""
+          echo "There is NO post-step save — bloated state stays local only"
+
+      # No post step save! actions/cache/restore does not save.
+
+  # ============================================================
+  # PHASE 3: Verify the cache is still lean.
+  # ============================================================
+  phase3-verify-still-lean:
+    if: ${{ inputs.phase == 'phase3-verify-still-lean' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Set up Python (NO built-in cache)
+        uses: actions/setup-python@v7
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Create requirements (same as phase 2)
+        run: |
+          echo "numpy" > requirements.txt
+          echo "scipy" >> requirements.txt
+
+      - name: Restore cache
+        uses: actions/cache/restore@v5
+        with:
+          path: ~/.cache/pip
+          key: pip-${{ runner.os }}-${{ env.PYTHON_VERSION }}-${{ hashFiles('requirements.txt') }}
+          restore-keys: |
+            pip-${{ runner.os }}-${{ env.PYTHON_VERSION }}-
+
+      - name: Install ONLY numpy
+        run: pip install numpy
+
+      - name: Check for bloat
+        run: |
+          echo "--- Cache dir size ---"
+          du -sh $(pip cache dir) || true
+          echo ""
+         
