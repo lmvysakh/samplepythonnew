@@ -1,0 +1,132 @@
+name: "Checking Cache Bloat - Updated PR code in local"
+
+
+on:
+  workflow_dispatch:
+    inputs:
+      phase:
+        description: "Which phase to run?"
+        type: choice
+        options:
+          - "phase1-save-lean-cache"
+          - "phase2-heavy-causes-bloat"
+          - "phase3-basic-gets-bloated"
+
+env:
+  PYTHON_VERSION: "3.12"
+
+jobs:
+  # ============================================================
+  # PHASE 1: Run this first. Saves a lean cache (numpy only).
+  # ============================================================
+  phase1-save-lean:
+    if: ${{ inputs.phase == 'phase1-save-lean-cache' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Create requirements (v1)
+        run: echo "numpy" > requirements.txt
+
+      - name: Set up Python
+        # uses: actions/setup-python@v7
+        uses: lmvysakh/setup-python@cache_save_functionality
+       # checking functionality scenario with PR branch - here lean cache needs to be saved
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: "pip"
+          cache-dependency-path: requirements.txt
+          cache-save: true
+
+      - name: Install base dependency
+        run: |
+          pip install numpy
+          echo "--- Cache dir size (lean) ---"
+          du -sh $(pip cache dir) || true
+          echo ""
+          echo " Post step will save this lean cache."
+          echo " Cache key is based on hash of 'requirements.txt' containing only 'numpy'"
+
+      # Post step: no existing cache for this key → SAVES lean cache
+
+  # ============================================================
+  # PHASE 2: Run this second.
+  # Simulates: requirements.txt was updated (added a comment/dep),
+  # so the cache key CHANGES. The old lean cache is partially
+  # restored via restore-keys, but then heavy deps get installed
+  # and the NEW bloated state is saved.
+  # ============================================================
+  phase2-heavy-bloats:
+    if: ${{ inputs.phase == 'phase2-heavy-causes-bloat' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Create requirements (v2 - simulates a lockfile update)
+        run: |
+          echo "numpy" > requirements.txt
+          echo "scipy" >> requirements.txt
+
+      - name: Set up Python
+        # uses: actions/setup-python@v7
+        uses: lmvysakh/setup-python@cache_save_functionality
+       # checking functionality scenario with PR branch
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: "pip"
+          cache-dependency-path: requirements.txt
+          cache-save: false
+
+      # At this point:
+      # - Primary key: setup-python-linux-3.12-pip-{hash of NEW requirements.txt}
+      # - restore-keys fallback: setup-python-linux-3.12-pip-
+      # - Result: PARTIAL MATCH → restores the lean cache from Phase 1
+      #   but primary key doesn't match → post step WILL save
+
+      - name: Install heavy dependencies
+        run: |
+          pip install numpy scipy
+          echo "--- Cache dir size (bloated!) ---"
+          du -sh $(pip cache dir) || true
+          echo ""
+          echo "  Primary key is NEW (requirements.txt changed)"
+          echo "  Restore was via restore-keys (partial match)"
+          echo "  Post step WILL SAVE because restored key ≠ primary key"
+          echo "  This bloated cache (with scipy) is now saved!"
+
+      # Post step: restored key ≠ primary key → SAVES bloated cache
+
+  # ============================================================
+  # PHASE 3: Run this third.
+  # A basic job that only needs numpy, but it restores the bloated cache from Phase 2 
+  # ============================================================
+  phase3-basic-gets-bloat:
+    if: ${{ inputs.phase == 'phase3-basic-gets-bloated' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Create requirements (same as phase 2)
+        run: |
+          echo "numpy" > requirements.txt
+          echo "scipy" >> requirements.txt
+
+      - name: Set up Python
+        # uses: actions/setup-python@v7
+        uses: lmvysakh/setup-python@cache_save_functionality
+      # checking functionality scenario with PR branch
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: "pip"
+          cache-dependency-path: requirements.txt
+          cache-save: false
+
+      - name: Install ONLY numpy
+        run: pip install numpy
+
+      - name: Check for bloat
+        run: |
+          echo "--- Cache dir size ---"
+          du -sh $(pip cache dir)  || true
+          echo ""
+          
